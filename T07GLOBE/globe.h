@@ -9,7 +9,14 @@
 #pragma warning(disable: 4244)
 
 #include <windows.h>
+#include <time.h>
 
+typedef double DBL;
+
+
+VOID Timer ( VOID );
+VOID GLB_TimerInit( VOID );
+VOID GLB_TimerResponse( VOID );
 VOID GlobeSet( INT Xcenter, INT Ycenter, DOUBLE R );
 VOID GlobeDraw( HDC hDC );
 

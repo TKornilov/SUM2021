@@ -118,13 +118,38 @@ __inline VEC VecNormalize( VEC V )
   return VecDivNum(V, sqrt(len));
 }
 
-/*Add*/
+/*Adds one vector to another*/
 __inline VEC VecAddVecEq( VEC *VRes, VEC V2 )  
 {
   VRes->X += V2.X;
   VRes->Y += V2.Y;
   VRes->Z += V2.Z;
   return *VRes;
+}
+
+/*Transforms a 3d vector by a matrix 3x3*/
+__inline VEC VectorTransform( VEC V, MATR M )
+{ 
+  return VecSet(V.X * M.M[0][0] + V.Y * M.M[0][1] + V.Z * M.M[0][2], 
+                V.X * M.M[1][0] + V.Y * M.M[1][1] + V.Z * M.M[1][2], 
+                V.X * M.M[2][0] + V.Y * M.M[2][1] + V.Z * M.M[2][2]);
+}
+
+/*Transforms a 3d vector by a matrix 4x3*/
+__inline VEC PointTransform( VEC V, MATR M )
+{ 
+  return VecSet(V.X * M.M[0][0] + V.Y * M.M[0][1] + V.Z * M.M[0][2] + M.M[3][0], 
+                V.X * M.M[1][0] + V.Y * M.M[1][1] + V.Z * M.M[1][2] + M.M[3][1], 
+                V.X * M.M[2][0] + V.Y * M.M[2][1] + V.Z * M.M[2][2] + M.M[3][2]);
+}
+
+/*Transforms a 3d vector by a matrix 4x4*/
+__inline VEC MulMatr( VEC V, MATR M )
+{ 
+  DBL w = V.X * M.M[0][3] + V.Y * M.M[1][3] + V.Z * M.M[2][3] + M.M[3][3];
+  return VecSet((V.X * M.M[0][0] + V.Y * M.M[0][1] + V.Z * M.M[0][2] + M.M[3][0]) / w, 
+                (V.X * M.M[1][0] + V.Y * M.M[1][1] + V.Z * M.M[1][2] + M.M[3][1]) / w, 
+                (V.X * M.M[2][0] + V.Y * M.M[2][1] + V.Z * M.M[2][2] + M.M[3][2]) / w);
 }
 
 /*Returns a Unit Matrix (which consists of zeros and a single diagonal of ones))*/
@@ -138,10 +163,29 @@ __inline MATR MatrTranslate( VEC T )
 {
   MATR m = UnitMatrix;
 
-  m.A[3][0] = T.X;
-  m.A[3][1] = T.Y;
-  m.A[3][2] = T.Z;
+  m.M[3][0] = T.X;
+  m.M[3][1] = T.Y;
+  m.M[3][2] = T.Z;
   return m;
+}
+
+__inline MATR MatrSet( DBL00, DBL01, DBL02, DBL03, 
+                       DBL10, DBL11, DBL12, DBL13, 
+                       DBL20, DBL21, DBL22, DBL23, 
+                       DBL30, DBL31, DBL32, DBL33 )
+{
+  MATR m =
+  {
+    {
+      {DBL00, 0, 0, 0},
+      {0, DBL11, DBL12, 0},
+      {0, DBL21, DBL22, 0},
+      {0, 0, 0, 1}
+    }  
+  };
+
+  return(m);
+    
 }
 
 /*Scales a vector into the dioganal of 3d matrix*/
@@ -154,6 +198,57 @@ __inline MATR MatrScale( VEC S )
 }
 
 
+/*Rotates a vector around x axis*/
+__inline MATR MatrRotateX( DBL AngleInDegree )
+{
+  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  MATR m =
+  {
+    {
+      {1, 0, 0, 0},
+      {0, c, s, 0},
+      {0, -s, c, 0},
+      {0, 0, 0, 1}
+    }  
+  };
+
+  return m;
+}
+
+/*Rotates a vector around y axis*/
+__inline MATR MatrRotateY( DBL AngleInDegree )
+{
+  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  MATR m =
+  {
+    {
+      {c, 0, -s, 0},
+      {0, 1, 0, 0},
+      {s, 0, c, 0},
+      {0, 0, 0, 1}
+    }  
+  };
+
+  return m;
+} 
+
+/*Rotates a vector around z axis*/
+__inline MATR MatrRotateZ( DBL AngleInDegree )
+{
+  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  MATR m =
+  {
+    {
+      {c, s, 0, 0},
+      {-s, c, 0, 0},
+      {0, 0, 1, 0},
+      {0, 0, 0, 1}
+    }  
+  };
+
+  return m;
+}
+
 /*Rotates a vector without an axis*/
 __inline MATR MatrRotate( DBL AngleInDegree, VEC V )
 {
@@ -162,7 +257,7 @@ __inline MATR MatrRotate( DBL AngleInDegree, VEC V )
   MATR m =
   {
     {
-      {c + A.X * A.X * (1 – c), A.X * A.Y * (1 – c) + A.Z * s, A.X * A.Z * (1 – c) – A.Y * s,0},
+      {c + A.X * A.X * (1 - c), A.X * A.Y * (1 - c) + A.Z * s, A.X * A.Z * (1 - c) - (A.Y * s), 0},
       {A.X * A.Y * (1 - c) - A.Z * s, c + A.Y * A.Y * (1 - c), A.Y * A.Z * (1 - c) + A.X * s, 0},
       {A.Z * A.X * (1 - c) + A.Y * s, A.Z * A.Y * (1 - c) - A.X * s, c + A.Z * A.Z * (1 - c), 0},
       {0, 0, 0, 1}
@@ -177,12 +272,21 @@ __inline MATR MatrRotate( DBL AngleInDegree, VEC V )
 __inline MATR MatrMulMatr( MATR M1, MATR M2 ) 
 {
   MATR r = {{{0}}};
+  INT i, j, k;
 
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      for (r.A[i][j] = 0, k = 0; k < 4; k++)
-        r.A[i][j] += M1.A[i][k] * M2.A[k][j];
+      for (r.M[i][j] = 0, k = 0; k < 4; k++)
+        r.M[i][j] += M1.M[i][k] * M2.M[k][j];
   return r;
+}
+
+__inline MATR MatrTranspose( MATR M )
+{
+  return MatrSet(M.M[0][0], M.M[1][0], M.M[2][0], M.M[3][0],
+                 M.M[0][1], M.M[1][1], M.M[2][1], M.M[3][1],
+                 M.M[0][2], M.M[1][2], M.M[2][2], M.M[3][2],
+                 M.M[0][3], M.M[1][3], M.M[2][3], M.M[3][3]);
 }
 
 /*Determinant of a 3d matrix*/
@@ -198,19 +302,40 @@ __inline DBL MatrDeterm3x3( DBL A11, DBL A12, DBL A13,
 __inline DBL MatrDeterm( MATR M )
 {
   return
-    +M.A[0][0] * MatrDeterm3x3(M.A[1][1], M.A[1][2], M.A[1][3],
-                               M.A[2][1], M.A[2][2], M.A[2][3],
-                               M.A[3][1], M.A[3][2], M.A[3][3]) +
-    -M.A[0][1] * MatrDeterm3x3(M.A[1][0], M.A[1][2], M.A[1][3],
-                               M.A[2][0], M.A[2][2], M.A[2][3],
-                               M.A[3][0], M.A[3][2], M.A[3][3]) +
-    +M.A[0][2] * MatrDeterm3x3(M.A[1][0], M.A[1][1], M.A[1][3],
-                               M.A[2][0], M.A[2][1], M.A[2][3],
-                               M.A[3][0], M.A[3][1], M.A[3][3]) +
-    -M.A[0][3] * MatrDeterm3x3(M.A[1][0], M.A[1][1], M.A[1][2],
-                               M.A[2][0], M.A[2][1], M.A[2][2],
-                               M.A[3][0], M.A[3][1], M.A[3][2]);
+    M.M[0][0] * MatrDeterm3x3(M.M[1][1], M.M[1][2], M.M[1][3],
+                               M.M[2][1], M.M[2][2], M.M[2][3],
+                               M.M[3][1], M.M[3][2], M.M[3][3]) 
+    - M.M[0][1] * MatrDeterm3x3(M.M[1][0], M.M[1][2], M.M[1][3],
+                               M.M[2][0], M.M[2][2], M.M[2][3],
+                               M.M[3][0], M.M[3][2], M.M[3][3]) 
+    + M.M[0][2] * MatrDeterm3x3(M.M[1][0], M.M[1][1], M.M[1][3],
+                               M.M[2][0], M.M[2][1], M.M[2][3],
+                               M.M[3][0], M.M[3][1], M.M[3][3]) 
+    - M.M[0][3] * MatrDeterm3x3(M.M[1][0], M.M[1][1], M.M[1][2],
+                               M.M[2][0], M.M[2][1], M.M[2][2],
+                               M.M[3][0], M.M[3][1], M.M[3][2]);
 }
+
+/*Creates an inverse version of a matrix*/
+__inline MATR MatrInverse( MATR M )
+{
+  MATR r;
+  DBL det = MatrDeterm(M);
+  INT s, i, j, P[][3] = {{1, 2, 3}, {0, 2, 3}, {0, 1, 3}, {0, 1, 2}};
+
+  if (det == 0)
+    return MatrIdentity();
+
+  for (s = 1, i = 0; i < 4; i++)
+    for (j = 0; j < 4; j++, s = -s)
+      r.M[j][i] =
+        s * MatrDeterm3x3(M.M[P[i][0]][P[j][0]], M.M[P[i][0]][P[j][1]], M.M[P[i][0]][P[j][2]],
+                          M.M[P[i][1]][P[j][0]], M.M[P[i][1]][P[j][1]], M.M[P[i][1]][P[j][2]],
+                          M.M[P[i][2]][P[j][0]], M.M[P[i][2]][P[j][1]], M.M[P[i][2]][P[j][2]]) / det;
+  return r;
+}
+
+
 
 #endif /*  __MTH_h_ */
 /*End of mth.h file*/
