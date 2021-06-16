@@ -1,9 +1,11 @@
-/*FILE NAME: 01fwin.c   
-  PrOGRAMMER: TK3
+/*FILE NAME: t07globe.c   
+  PROGRAMMER: TK3
+  DATE:15.06.2021
 */
 #include <windows.h>
 #include <math.h>
-#define WND_CLASS_NAME "Summer pradctice"
+#include "globe.h"
+#define WND_CLASS_NAME "Summer practice"
 
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
@@ -53,43 +55,6 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
   return msg.wParam;
 }
 
-/*Eye creation*/
-VOID DrawEye( HDC hDC, INT X, INT Y, INT R, INT R1, INT Mx, INT My )
-{ 
-  INT fl1 = 0, fl2 = 0;
-  HPEN hPen, hPenOld, hPen2, hPenOld2;
-  LOGBRUSH lb;
-  lb.lbStyle = BS_SOLID;
-  lb.lbHatch = HS_FDIAGONAL;
-  lb.lbColor = RGB(0, 0, 0);
-  hPen = ExtCreatePen(PS_GEOMETRIC | PS_SOLID, 8, &lb, 0, NULL);
-  SelectObject(hDC, GetStockObject(DC_BRUSH));
-  SetDCBrushColor(hDC, RGB(255, 255, 255));                
-  hPenOld = SelectObject(hDC, hPen);
-  Ellipse(hDC, X, Y, X + 2 * R, Y + 2 * R);
-  hPen2 = ExtCreatePen(PS_GEOMETRIC | PS_SOLID, 1, &lb, 0, NULL);
-  SelectObject(hDC, GetStockObject(DC_BRUSH));
-  hPenOld2 = SelectObject(hDC, hPen2);
-  SetDCBrushColor(hDC, RGB(120, 0, 255));
-  /*len = sqrt((Mx - X) * (Mx - X) + (My - Y) * (My - Y));
-  X1 = X + (R - R1) * (Mx - X) / len;
-  Y1 = Y + (R - R1) * (My - Y) / len;*/
-  if (Mx < X)
-    fl1 = -1;
-  if (Mx > X)
-    fl1 = 1;
-  if (My < Y)
-    fl2 = -1;
-  if (My > Y)
-    fl2 = 1; 
-
-  Ellipse(hDC, X - R1 + R + (Mx / 80 * fl1), Y - R1 + R + (My / 80 * fl2), X + R1 + R + (Mx / 80 * fl1), Y + R1 + R + (My / 80 * fl2));
-  SelectObject(hDC, hPenOld2);
-  SelectObject(hDC, hPenOld);
-  DeleteObject(hPen2);
-  DeleteObject(hPen);
-}
-
 /*Reaction to windows messages*/
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam )
@@ -98,7 +63,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   static HDC hMemDC;
   static HBITMAP hBm;
-  INT x = 0, y = 0, i;
+  INT x = 0, y = 0;
   POINT pt;
   static INT w, h;
   switch (Msg)
@@ -113,26 +78,27 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     GetCursorPos(&pt);
     ScreenToClient(hWnd, &pt);
     hDC = GetDC(hWnd);
-    srand(30);
-    for (i = 0; i < 102; i++)    
-      DrawEye(hMemDC, rand() % 3000, rand() % 2000, 50 + rand() % 47, 18 + rand() % 8, pt.x, pt.y);
+    GlobeDraw(hMemDC);
     BitBlt(hDC, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
     ReleaseDC(hWnd, hDC); 
-    return 0;
+    return 0;                                                                                                 
   case WM_SIZE:
     w = LOWORD(lParam);
     h = HIWORD(lParam);
     if (hBm != NULL)
       DeleteObject(hBm);
     hDC = GetDC(hWnd);
-    hBm = CreateCompatibleBitmap(hDC, w, h); 
+    hBm = CreateCompatibleBitmap(hDC, w, h);
+    GlobeSet(w / 2, h / 2, 0.5);
     ReleaseDC(hWnd, hDC); 
     SelectObject(hMemDC, hBm);
     SendMessage(hWnd, WM_TIMER, 0, 0);
     return 0;
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
-    Rectangle(hDC, 0, 0, w, h);
+    SelectObject(hMemDC, GetStockObject(GRAY_BRUSH));
+    //SetDCBrushColor(hDC, RGB(127, 127, 127));   
+    Rectangle(hMemDC, -1, -1, w + 3, h + 3);
     BitBlt(hDC, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
     EndPaint(hWnd, &ps);
     return 0;
@@ -145,4 +111,4 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   }
   return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
-/*End of t02eyes.c file*/
+/*End of t07globe.c file*/
