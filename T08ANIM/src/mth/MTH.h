@@ -193,7 +193,7 @@ __inline MATR MatrScale( VEC S )
 {
   return MatrSet(S.X, 0, 0, 0,
                  0, S.Y, 0, 0,
-                 0, 0, S.Y, 0,
+                 0, 0, S.Z, 0,
                  0, 0, 0, 1);
 }
 
@@ -276,7 +276,7 @@ __inline MATR MatrMulMatr( MATR M1, MATR M2 )
 
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      for (r.M[i][j] = 0, k = 0; k < 4; k++)
+      for (k = 0; k < 4; k++)
         r.M[i][j] += M1.M[i][k] * M2.M[k][j];
   return r;
 }
@@ -382,7 +382,7 @@ __inline MATR MatrInverse( MATR M )
                           M.M[P[i][1]][P[j][0]], M.M[P[i][1]][P[j][1]], M.M[P[i][1]][P[j][2]],
                           M.M[P[i][2]][P[j][0]], M.M[P[i][2]][P[j][1]], M.M[P[i][2]][P[j][2]]) / det;
   return r;
-}
+}   
 
 
 

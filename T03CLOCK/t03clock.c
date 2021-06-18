@@ -57,12 +57,12 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
 }
 
 /*Clock hand drawing through polygons*/
-VOID DrawHand( HDC hDC, INT POLW, INT POLH, INT CENTX, INT CENTY )
+/*VOID DrawHand( HDC hDC, INT POLW, INT POLH, INT CENTX, INT CENTY )
 {
-  PINT *Pt;
+  POINT *Pt;
   Polygon(hDC, *Pt, POLW + CENTX); 
 
-}
+}*/
 
 /*Reaction to windows messages*/
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
@@ -74,8 +74,9 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   HFONT hFnt;
   POINT pt;
-  static HDC hMemDC, hLogoDC, hCoatDC;
-  static HBITMAP hBm, hLogoBm, hCoatBm;
+  static BITMAP bmXorLogo, bmAndLogo;
+  static HDC hMemDC, hLogoDC, hCoatAndDC, hCoatXorDC;
+  static HBITMAP hBm, hLogoBm, hCoatAndBm, hCoatXorBm;
   INT x = 0, y = 0;
   LOGBRUSH lb;
   DOUBLE a;
@@ -89,7 +90,10 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hMemDC  = CreateCompatibleDC(hDC);
     hLogoDC  = CreateCompatibleDC(hDC);
-    hCoatDC  = CreateCompatibleDC(hDC);
+    hCoatXorDC  = CreateCompatibleDC(hDC);
+    hCoatAndDC  = CreateCompatibleDC(hDC);
+    GetObject(hCoatXorBm, sizeof(BITMAP), &bmXorLogo);
+    GetObject(hCoatAndBm, sizeof(BITMAP), &bmAndLogo);
     ReleaseDC(hWnd, hDC);
     return 0;
   case WM_TIMER:
@@ -113,8 +117,9 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     SelectObject(hMemDC, hFnt);
     SetTextColor(hMemDC, RGB(0, 0, 0));
     TextOut(hMemDC, w / 2 - h / 4, h * 4 / 5, Buf, strlen(Buf));
-    BitBlt(hMemDC, 200, 200, w, h, hCoatDC, 0, 0, SRCAND);
     BitBlt(hMemDC, w / 2 - h / 4, h / 4, w, h, hLogoDC, 0, 0, SRCCOPY);
+    BitBlt(hMemDC, pt.x - bmAndLogo.bmWidth / 2, pt.y - bmAndLogo.bmWidth / 2, w, h, hCoatAndDC, 0, 0, SRCAND);
+    BitBlt(hMemDC, pt.x - bmXorLogo.bmWidth / 2, pt.y - bmXorLogo.bmWidth / 2, w, h, hCoatXorDC, 0, 0, SRCINVERT);
     BitBlt(hDC, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
     hPen = ExtCreatePen(PS_GEOMETRIC | PS_SOLID, 1, &lb, 0, NULL);
     hPenOld = SelectObject(hDC, hPen);
@@ -143,11 +148,13 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hBm = CreateCompatibleBitmap(hDC, w, h); 
     hLogoBm = LoadImage(NULL, "Clockface.bmp", IMAGE_BITMAP, h / 2, h / 2, LR_LOADFROMFILE);
-    hCoatBm = LoadImage(NULL, "Coat_of_arms_of_Lithuania_And.bmp", IMAGE_BITMAP, h / 2, h / 2, LR_LOADFROMFILE);
+    hCoatAndBm = LoadImage(NULL, "Coat_of_arms_of_Lithuania_And.bmp", IMAGE_BITMAP, h / 2, h / 2, LR_LOADFROMFILE);
+    hCoatXorBm = LoadImage(NULL, "Coat_of_arms_of_Lithuania_Xor.bmp", IMAGE_BITMAP, h / 2, h / 2, LR_LOADFROMFILE);
     ReleaseDC(hWnd, hDC); 
     SelectObject(hMemDC, hBm);
     SelectObject(hLogoDC, hLogoBm);
-    SelectObject(hCoatDC, hCoatBm);
+    SelectObject(hCoatXorDC, hCoatXorBm);
+    SelectObject(hCoatAndDC, hCoatAndBm);
     SendMessage(hWnd, WM_TIMER, 0, 0);
     return 0;
   case WM_PAINT:
@@ -160,7 +167,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
       DeleteObject(hBm);
     DeleteObject(hMemDC);
     DeleteObject(hLogoDC);
-    DeleteObject(hCoatDC);
+    DeleteObject(hCoatAndDC);
+    DeleteObject(hCoatXorDC);
     KillTimer(hWnd, 30);
     PostQuitMessage(0);
     return 0;

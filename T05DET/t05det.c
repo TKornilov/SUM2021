@@ -10,7 +10,7 @@ typedef DOUBLE DBL;
 #define MAX 10
 DBL A[MAX][MAX];
 INT N;
-DBL prod = 1, Determinant = 0;
+DBL prod = 1.0, Determinant = 0.0;
 
 INT P[MAX];
 BOOL IsParity;
@@ -56,7 +56,7 @@ VOID f( INT Pos )
 }
 
 
-BOOL LoadMaxtrix( CHAR *FileName )
+BOOL LoadMatrix( CHAR *FileName )
 {
   FILE *F;
   INT i, j;
@@ -84,7 +84,7 @@ VOID main ( VOID )
 {
   INT i;
 
-  if (LoadMaxtrix("m1.txt"))
+  if (LoadMatrix("m1.txt"))
   {
     IsParity = 1;
     for (i = 0; i < N; i++)

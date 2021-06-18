@@ -7,7 +7,17 @@
 #include "timer.h"
 
 
-VOID Timer ( VOID )
+DBL GLB_Time; 
+DBL GLB_DeltaTime; 
+DBL GLB_FPS; 
+BOOL GLB_IsPause;
+LONG StartTime;
+LONG OldTime;
+LONG PauseTime;
+LONG OldFPSTime;
+LONG FrameCount;
+
+VOID Timer( VOID )
 {
   LONG t = clock();
   static LONG StartTime = -1; 

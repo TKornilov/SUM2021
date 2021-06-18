@@ -27,7 +27,7 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
   wc.cbWndExtra = 0;
   wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-  wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);       
+  wc.hIcon = LoadIcon(NULL, IDI_SHIELD);       
   wc.lpszMenuName = NULL;
   wc.hInstance = hInstance;
   wc.lpfnWndProc = MyWindowFunc;
@@ -51,11 +51,16 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
   ShowWindow(hWnd, SW_SHOWNORMAL);
   UpdateWindow(hWnd);
 
-  while (GetMessage(&msg, NULL, 0, 0))
-  {
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
-  }
+    while (TRUE)
+    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    {
+      if (msg.message == WM_QUIT)
+        break;
+      DispatchMessage(&msg);
+    }
+    else
+      SendMessage(hWnd, WM_TIMER, 30, 0);
+
   return msg.wParam;
 }
 
@@ -68,9 +73,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   static HDC hMemDC;
   static HBITMAP hBm;
   INT x = 0, y = 0;
-  HFONT hFnt, hFntOld;
-  POINT pt;
-  MATR m;
+  HFONT hFnt;
   static CHAR Buf[100], Buf1[100];
   static INT w, h;
   switch (Msg)
@@ -80,6 +83,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hMemDC  = CreateCompatibleDC(hDC);
     ReleaseDC(hWnd, hDC);
+    GLB_TimerInit();
     return 0;
   case WM_KEYDOWN:
     if(VK_SPACE)
@@ -105,6 +109,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
       TextOut(hMemDC, w  / 5 * 2, h / 2, Buf1, sprintf(Buf1, "PAUSE", GLB_FPS));
     }
     BitBlt(hDC, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
+    SetBkMode(hDC, TRANSPARENT);
     TextOut(hDC, 8, 8, Buf, sprintf(Buf, "FPS: %.3f", GLB_FPS));
     ReleaseDC(hWnd, hDC); 
     return 0;                                                                                                 
