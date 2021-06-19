@@ -3,12 +3,15 @@
   DATE:17.06.2021
 */
 #include <stdio.h>
+#include <string.h>
 #include <windows.h>
 #include <math.h>
 #include <time.h>
 
 #include "../def.h"
 #define WND_CLASS_NAME "Summer practice"
+
+tk3ANIM TK3_Anim;
 
 LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
@@ -93,58 +96,58 @@ LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
 {
   HDC hDC;
   PAINTSTRUCT ps;
-  INT x = 0, y = 0;
+  INT x = 0, y = 0, i;
+  POINT pt;
   static CHAR Buf[100];
   static INT w, h;
   static tk3PRIM Pr, Pr1;
 
+
   switch (Msg)
   {
+  case WM_MOUSEWHEEL:
+    TK3_MouseWheel += (SHORT)HIWORD(wParam);
+    return 0;
   case WM_CREATE:
     SetTimer(hWnd, 30, 1, NULL);
     TK3_RndInit(hWnd);
-    TK3_RndPrimLoad(&Pr, "med_house_final.obj");
-    TK3_RndPrimLoad(&Pr1, "Roman_soldier.obj");
-   /* TK3_RndPrimCreate(&Pr, 4, 6);
-    Pr.V[0].P = VecSet(0, 0, 0);
-    Pr.V[1].P = VecSet(2, 0, 0);
-    Pr.V[2].P = VecSet(0, 2, 0);
-    Pr.V[3].P = VecSet(2, 2, 0);
- 
-    Pr.I[0] = 0;
-    Pr.I[1] = 1;
-    Pr.I[2] = 2;
-
-    Pr.I[3] = 2;
-    Pr.I[4] = 1;
-    Pr.I[5] = 3; */
-    /*SetTimer(hWnd, 30, 10, NULL);
-    hDC = GetDC(hWnd);
-    ReleaseDC(hWnd, hDC);
-    /*GLB_TimerInit();*/
+    TK3_Anim.Units[0] = TK3_AnimUnitCowCreate();
+    //TK3_RndPrimLoad(&Pr, "med_house_final.obj");
+    //TK3_RndPrimLoad(&Pr1, "Roman_soldier.obj");
     return 0;
   case WM_KEYDOWN:
-    /*if(VK_SPACE)
-      GLB_IsPause = !GLB_IsPause;*/
+    GetKeyboardState(TK3_Anim.Keys);
+    for (i = 0; i < 256; i++)
+    {
+      TK3_Anim.Keys[i] >>= 7;
+      TK3_Anim.KeysClick[i] = TK3_Anim.Keys[i] && !TK3_Anim.KeysOld[i];   
+    }
+    memcpy(TK3_Anim.KeysOld, TK3_Anim.Keys, 256);   
     return 0;
   case WM_TIMER:
+    /*GetCursorPos(&pt);
+    ScreenToClient(hWnd, &pt);
+    TK3_Anim.Mdx = pt.x - TK3_Anim.Mx;
+    TK3_Anim.Mdy = pt.y - TK3_Anim.My;
+    TK3_Anim.Mx = pt.x;
+    TK3_Anim.My = pt.y;
+    TK3_Anim.Mdz = TK3_MouseWheel;
+    TK3_Anim.Mz += TK3_MouseWheel;
+    TK3_MouseWheel = 0;
+
     /*GLB_TimerResponse(); */
     TK3_RndStart();
     TK3_RndCamSet(VecSet(5, 200, 200), VecSet(0, 0, 0), VecSet(0, 1, 0));
-    TK3_RndPrimDraw(&Pr, MatrRotateX(270));
-    TK3_RndPrimDraw(&Pr1, MatrMulMatr(MatrScale(VecSet(1, 1, 1)), MatrRotateX(270)));
+    TK3_AnimRender();
+    //TK3_RndPrimDraw(&Pr, MatrRotateX(270));
+    //TK3_RndPrimDraw(&Pr1, MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrScale(VecSet(10, 10, 10)), MatrRotateX(0)), MatrTranslate(VecSet(50 * sin(clock() / (DBL)CLOCKS_PER_SEC) * cos(clock() / (DBL)CLOCKS_PER_SEC), 50, 70))), MatrRotateZ(0)));
     TK3_RndEnd();
 
     hDC = GetDC(hWnd);
     TK3_RndCopyFrame(hDC);
     ReleaseDC(hWnd, hDC); 
-    /* InvalidateRect(hWnd, NULL, FALSE); */
     return 0;
   case WM_SIZE:
-   /* w = LOWORD(lParam);
-    h = HIWORD(lParam);
-    hDC = GetDC(hWnd);
-    ReleaseDC(hWnd, hDC); */
     TK3_RndResize(LOWORD(lParam), HIWORD(lParam));
     SendMessage(hWnd, WM_TIMER, 0, 0);
     return 0;

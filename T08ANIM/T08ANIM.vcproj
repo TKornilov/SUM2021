@@ -193,6 +193,26 @@
 			<Filter
 				Name="Animation Support"
 				>
+				<File
+					RelativePath=".\src\anim\anim.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\anim\anim.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\anim\input.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\anim\timer.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\anim\units.c"
+					>
+				</File>
 				<Filter
 					Name="Rendering system"
 					>
@@ -219,6 +239,18 @@
 				>
 				<File
 					RelativePath=".\src\win\main.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Units Support"
+				>
+				<File
+					RelativePath=".\src\units\units.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\units\unitscow.c"
 					>
 				</File>
 			</Filter>

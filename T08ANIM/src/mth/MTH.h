@@ -169,18 +169,19 @@ __inline MATR MatrTranslate( VEC T )
   return m;
 }
 
-__inline MATR MatrSet( DBL00, DBL01, DBL02, DBL03, 
-                       DBL10, DBL11, DBL12, DBL13, 
-                       DBL20, DBL21, DBL22, DBL23, 
-                       DBL30, DBL31, DBL32, DBL33 )
+/*Defines a matrix*/
+__inline MATR MatrSet( DBL DBL00, DBL DBL01, DBL DBL02, DBL DBL03, 
+                       DBL DBL10, DBL DBL11, DBL DBL12, DBL DBL13, 
+                       DBL DBL20, DBL DBL21, DBL DBL22, DBL DBL23, 
+                       DBL DBL30, DBL DBL31, DBL DBL32, DBL DBL33 )
 {
   MATR m =
   {
     {
-      {DBL00, 0, 0, 0},
-      {0, DBL11, DBL12, 0},
-      {0, DBL21, DBL22, 0},
-      {0, 0, 0, 1}
+      {DBL00, DBL01, DBL02, DBL03},
+      {DBL10, DBL11, DBL12, DBL13},
+      {DBL20, DBL21, DBL22, DBL23},
+      {DBL30, DBL31, DBL32, DBL33}
     }  
   };
 
@@ -191,10 +192,12 @@ __inline MATR MatrSet( DBL00, DBL01, DBL02, DBL03,
 /*Scales a vector into the dioganal of 3d matrix*/
 __inline MATR MatrScale( VEC S )
 {
-  return MatrSet(S.X, 0, 0, 0,
-                 0, S.Y, 0, 0,
-                 0, 0, S.Z, 0,
-                 0, 0, 0, 1);
+  MATR M;
+  M = MatrSet(S.X, 0.0, 0.0, 0.0,
+              0.0, S.Y, 0.0, 0.0,
+              0.0, 0.0, S.Z, 0.0,
+              0.0, 0.0, 0.0, 1.0);
+  return M;
 }
 
 

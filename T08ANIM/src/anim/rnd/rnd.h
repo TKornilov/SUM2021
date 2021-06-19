@@ -11,7 +11,6 @@ typedef struct tagtk3VERTEX
 {
  VEC P;
 } tk3VERTEX; /*3d Vector for primitives*/
-
 typedef struct tagtk3PRIM
 {
  tk3VERTEX *V;

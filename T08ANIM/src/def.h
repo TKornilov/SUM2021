@@ -6,6 +6,7 @@
 #define __def_h_
 
 #pragma warning(disable: 4244)
+#pragma comment(lib, "winmm")
 
 /* Debug memory allocation support */
 #ifndef NDEBUG
@@ -18,10 +19,15 @@
 #  define SetDbgMemHooks() ((void)0)
 #endif /* _DEBUG */
 
+#include <windows.h>
+#include <mmsystem.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "mth/mth.h"
+#include "units/units.h"
+#include "anim/anim.h"
 #include "anim/rnd/rnd.h"
+extern tk3ANIM TK3_Anim;
 
 #endif /* __def_h_ */
 
