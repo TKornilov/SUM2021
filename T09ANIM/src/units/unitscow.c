@@ -1,6 +1,6 @@
 /*FILE NAME: unitscow.c 
   PROGRAMMER: TK3
-  DATE:19.06.2021
+  DATE:21.06.2021
 */
 #include <time.h>
 #include "../def.h"

@@ -33,6 +33,7 @@ VOID GLB_TimerInit( VOID )
   FrameCount = 0;
   GLB_IsPause = FALSE;
 }
+
 VOID GLB_TimerResponse( VOID )
 {
   LONG t = clock();

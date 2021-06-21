@@ -1,6 +1,6 @@
 /*FILE NAME: anim.h  
   PROGRAMMER: TK3
-  DATE:18.06.2021
+  DATE:21.06.2021
 */ 
 #ifndef __anim_h_
 #define  __anim_h_

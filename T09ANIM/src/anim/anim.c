@@ -1,6 +1,6 @@
 /*FILE NAME: anim.c 
   PROGRAMMER: TK3
-  DATE:18.06.2021
+  DATE:21.06.2021
 */
 #include "anim.h"
 #include "../def.h"

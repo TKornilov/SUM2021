@@ -38,7 +38,7 @@ VEC RotateY( VEC V, DBL Angle )
   VEC r;
   
   r.Z = V.Z * c - V.X * s;
-  r.X = V.Z* s + V.X * c;
+  r.X = V.Z * s + V.X * c;
   r.Y = V.Y;
 
   return r;
@@ -76,7 +76,6 @@ VOID GlobeDraw( HDC hDC )
 
   srand(71);
   minSize = WinW < WinH ? WinW : WinH;
-  //m = MatrIdentity();
   m = MatrMulMatr(MatrView(VecSet(0.5, 0, 0.5), VecSet(0, 0, 0), VecSet(0, 1, 0)), m);
   lb.lbStyle = BS_SOLID;
   lb.lbHatch = HS_FDIAGONAL;

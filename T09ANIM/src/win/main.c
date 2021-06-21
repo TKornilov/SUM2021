@@ -1,6 +1,6 @@
 /*FILE NAME: main.c   
   PROGRAMMER: TK3
-  DATE:17.06.2021
+  DATE:21.06.2021
 */
 #include <stdio.h>
 #include <string.h>
