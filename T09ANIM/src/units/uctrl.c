@@ -15,10 +15,10 @@ static tk3PRIM Conw;
  */
 static VOID TK3_UnitControlInit( tk3UNIT_CONTROL *Uni, tk3ANIM *Ani )
 {
-  Uni->CamLoc = VecSet(5, 200, 200);
+  Uni->CamLoc = VecSet(2, 50, 50);
   Uni->CamSet = VecSet(0, 1, 0);
-  Uni->Speed = 2.0;
-  Uni->AngleSpeed = 2.0;
+  Uni->Speed = 55.0;
+  Uni->AngleSpeed = 55.0;
 } /* End of 'TK3_UnitInit' function */
 
 /* Unit deinitialization function.
@@ -47,8 +47,16 @@ static VOID TK3_UnitControlResponse( tk3UNIT_CONTROL *Uni, tk3ANIM *Ani )
 
   Uni->CamDir = VecSet(-TK3_RndMatrView.M[0][2], -TK3_RndMatrView.M[1][2], -TK3_RndMatrView.M[2][2]);
   Uni->CamLoc =
-  VecAddVec(Uni->CamLoc,
-  VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
+    VecAddVec(Uni->CamLoc,
+      VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
+  Uni->CamLoc =
+    PointTransform(Uni->CamLoc,
+      MatrRotateY(Ani->Keys[VK_LBUTTON] *
+        Ani->GlobalDeltaTime * Uni->AngleSpeed * Ani->Mdx));
+  Uni->CamLoc =
+    VecAddVec(Uni->CamLoc,
+      VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed *
+        (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN])));
   /*Uni->CamLoc =
   VecAddVec(Uni->CamLoc,
   VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));*/

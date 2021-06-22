@@ -18,11 +18,19 @@ static VOID TK3_UnitCowInit( tk3UNIT_COW *Uni, tk3ANIM *Ani )
   INT i;
   COW.NumOfV = Uni->Cow.NumOfV;
   for(i = 0; i < COW.NumOfV; i++)
+  {
     COW.V[i].P = Uni->Cow.V[i].P;
+    COW.V[i].T = Uni->Cow.V[i].T;
+    COW.V[i].N = Uni->Cow.V[i].N;
+    COW.V[i].C = Uni->Cow.V[i].C;
+  }
   COW.NumOfI = Uni->Cow.NumOfI;
   for(i = 0; i < COW.NumOfI; i++)
     COW.I[i] = Uni->Cow.I[i];
-  COW.Trans = Uni->Cow.Trans;   
+  COW.Trans = Uni->Cow.Trans;
+  COW.VA = Uni->Cow.VA;
+  COW.VBuf = Uni->Cow.VBuf;
+  COW.NumOfElements = Uni->Cow.NumOfElements;
   TK3_RndPrimLoad(&COW, "BIN/MODELS/cow.obj");
 } /* End of 'TK3_UnitInit' function */
 
@@ -69,19 +77,26 @@ static VOID TK3_UnitCowResponse( tk3UNIT_COW *Uni, tk3ANIM *Ani )
  */
 static VOID TK3_UnitCowRender( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
-  INT i;
   DBL t = TK3_Anim.Time;
-  if(COW.V == NULL)
+  /*if(COW.V == NULL)
   {
-  COW.NumOfV = Uni->Cow.NumOfV;
-  for(i = 0; i < COW.NumOfV; i++)
-    COW.V[i].P = Uni->Cow.V[i].P;
-  COW.NumOfI = Uni->Cow.NumOfI;
-  for(i = 0; i < COW.NumOfI; i++)
-    COW.I[i] = Uni->Cow.I[i];
-  COW.Trans = Uni->Cow.Trans;
-  }
-  TK3_RndPrimDraw(&COW,  MatrMulMatr(MatrMulMatr(MatrScale(VecSet(10, 10, 10)), MatrTranslate(VecSet(100 * sin(t), 0, 0))), MatrRotateY(180 * sin(t))));
+    COW.NumOfV = Uni->Cow.NumOfV;
+    for(i = 0; i < COW.NumOfV; i++)
+    {
+      COW.V[i].P = Uni->Cow.V[i].P;
+      COW.V[i].T = Uni->Cow.V[i].T;
+      COW.V[i].N = Uni->Cow.V[i].N;
+      COW.V[i].C = Uni->Cow.V[i].C;
+    }
+    COW.NumOfI = Uni->Cow.NumOfI;
+    for(i = 0; i < COW.NumOfI; i++)
+      COW.I[i] = Uni->Cow.I[i];
+    COW.Trans = Uni->Cow.Trans;
+    COW.VA = Uni->Cow.VA;
+    COW.VBuf = Uni->Cow.VBuf;
+    COW.NumOfElements = Uni->Cow.NumOfElements;
+  } */
+  TK3_RndPrimDraw(&COW,  MatrMulMatr(MatrMulMatr(MatrScale(VecSet(1, 1, 1)), MatrTranslate(VecSet(30 * sin(t), 0, 0))), MatrRotateY(180 * sin(t))));
 } /* End of 'TK3_UnitRender' function */
 
 /* Unit creation function.
@@ -105,6 +120,7 @@ tk3UNIT * TK3_AnimUnitCowCreate( VOID )
   Uni->Response = (VOID *)TK3_UnitCowResponse;
   Uni->Render = (VOID *)TK3_UnitCowRender;
   TK3_Anim.NumOfUnits++;
+
   COW = COW;
 
   return Uni;

@@ -86,7 +86,7 @@ VOID TK3_RndInit( HWND hWnd )
   wglMakeCurrent(TK3_hRndDC, TK3_hRndGLRC);
   /* Set default OpenGL parameters */
   glEnable(GL_DEPTH_TEST);
-
+  glClearColor(0.3, 0.47, 0.81, 1);
 }
 
 /*Destroys parameters of a frame*/

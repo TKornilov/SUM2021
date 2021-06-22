@@ -20,11 +20,21 @@
 /* Base double type shortened name */
 typedef double DBL;
 typedef float FLT;
+/* 2d vector definition */
+typedef struct tagVEC2
+{
+  FLT X, Y;
+} VEC2;
 /* 3d vector definition */
 typedef struct tagVEC
 {
   FLT X, Y, Z;
 } VEC;
+/* 4d vector definition */
+typedef struct tagVEC4
+{
+  FLT X, Y, Z, W;
+} VEC4;
 /* 4d matrix definition */
 typedef struct tagMATR
 {
@@ -45,6 +55,22 @@ static MATR UnitMatrix =
 __inline VEC VecSet( FLT X, FLT Y, FLT Z )
 {
   VEC v = {X, Y, Z};
+
+  return v;
+}
+
+/*Creates a 2d vector*/
+__inline VEC2 Vec2Set( FLT X, FLT Y, FLT Z )
+{
+  VEC2 v = {X, Y};
+
+  return v;
+}
+
+/*Creates a 4d vector*/
+__inline VEC4 Vec4Set( FLT X, FLT Y, FLT Z, FLT W )
+{
+  VEC4 v = {X, Y, Z, W};
 
   return v;
 }

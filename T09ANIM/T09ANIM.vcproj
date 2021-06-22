@@ -261,6 +261,10 @@
 					RelativePath=".\src\units\unitscow.c"
 					>
 				</File>
+				<File
+					RelativePath=".\src\units\uroman.c"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

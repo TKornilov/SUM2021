@@ -11,14 +11,16 @@
 
 typedef struct tagtk3VERTEX
 {
- VEC P;
+  VEC P, N;
+  VEC2 T;
+  VEC4 C;
 } tk3VERTEX; /*3d Vector for primitives*/
 typedef struct tagtk3PRIM
 {
  tk3VERTEX *V;
  INT NumOfV;
  INT *I;
- INT NumOfI;
+ INT NumOfI, IBuf, VBuf, VA, NumOfElements;
  MATR Trans;
 } tk3PRIM;  /*Ptimitive and the amount of vectors and matrixes defining it*/
 
@@ -43,7 +45,7 @@ VOID TK3_RndResize( INT W, INT H );
 VOID TK3_RndProjSet( VOID );
 VOID TK3_RndCopyFrame( VOID );
 VOID TK3_RndCamSet( VEC Loc, VEC At, VEC Up );
-BOOL TK3_RndPrimCreate( tk3PRIM *Pr, INT NoofV, INT NoofI );
+VOID TK3_RndPrimCreate( tk3PRIM *Pr, tk3VERTEX *V, INT NumOfV, INT *I,  INT NumOfI );
 VOID TK3_RndPrimFree( tk3PRIM *Pr );
 VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World );
 BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName );

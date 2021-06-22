@@ -112,6 +112,7 @@ LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
     TK3_AnimInit(hWnd);                                                  
     TK3_Anim.Units[0] = TK3_AnimUnitCowCreate();
     TK3_Anim.Units[1] = TK3_AnimUnitControlCreate();
+    TK3_Anim.Units[2] = TK3_AnimUnitRomanCreate();
     for (i = 0; i < TK3_Anim.NumOfUnits; i++)
       TK3_Anim.Units[i]->Init(TK3_Anim.Units[i], &TK3_Anim);
     TK3_RndCamSet(VecSet(5, 200, 200), VecSet(0, 0, 0), VecSet(0, 1, 0));
@@ -122,7 +123,13 @@ LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
       SendMessage(hWnd, WM_CLOSE, 0, 0);
     else if (wParam == VK_SPACE)
       TK3_Anim.IsPause = !TK3_Anim.IsPause;
-    /**/   
+    /*GetKeyboardState(TK3_Anim.Keys);
+    for (i = 0; i < 256; i++)
+    {
+      TK3_Anim.Keys[i] >>= 7;
+      TK3_Anim.KeysClick[i] = TK3_Anim.Keys[i] && !TK3_Anim.KeysOld[i];   
+    }
+    memcpy(TK3_Anim.KeysOld, TK3_Anim.Keys, 256);*/   
     return 0;
   case WM_TIMER:
     TK3_RndCopyFrame();

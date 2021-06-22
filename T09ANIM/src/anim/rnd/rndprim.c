@@ -6,48 +6,104 @@
 #include <ctype.h>
 #include <string.h>
 #include "rnd.h"
-
-/*Creates a primitive*/
-BOOL TK3_RndPrimCreate( tk3PRIM *Pr, INT NoofV, INT NoofI )
+#include "../../mth/mth.h"
+/* Primitive creation function.
+ * ARGUMENTS:
+ *   - primitive pointer:
+ *       tk3PRIM *Pr;
+ *   - vertex attributes array:
+ *       tk3VERTEX *V;
+ *   - number of vertices:
+ *       INT NumOfV;
+ *   - index array (for trimesh – by 3 ones, may be NULL)
+ *       INT *I;
+ *   - number of indices
+ *       INT NumOfI;
+ * RETURNS: None.
+ */
+VOID TK3_RndPrimCreate( tk3PRIM *Pr, tk3VERTEX *V, INT NumOfV, INT *I, INT NumOfI )
 {
-  INT size;
+  memset(Pr, 0, sizeof(tk3PRIM));   /* <-- <string.h> */
 
-  memset(Pr, 0, sizeof(tk3PRIM));   
-  size = sizeof(tk3VERTEX) * NoofV + sizeof(INT) * NoofI;
+  if (V != NULL && NumOfV != 0)
+  {
+    glGenBuffers(1, &Pr->VBuf);
+    glGenVertexArrays(1, &Pr->VA);
 
-  if ((Pr->V = malloc(size)) == NULL)
-    return FALSE;
-  Pr->I = (INT *)(Pr->V + NoofV);
-  Pr->NumOfV = NoofV;
-  Pr->NumOfI = NoofI;
+    glBindVertexArray(Pr->VA);
+    glBindBuffer(GL_ARRAY_BUFFER, Pr->VBuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tk3VERTEX) * NumOfV, V, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(tk3VERTEX),
+                          (VOID *)0); /* position */
+    glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(tk3VERTEX),
+                          (VOID *)sizeof(VEC)); /* texture coordinates */
+    glVertexAttribPointer(2, 3, GL_FLOAT, FALSE, sizeof(tk3VERTEX),
+                          (VOID *)(sizeof(VEC) + sizeof(VEC2))); /* normal */
+    glVertexAttribPointer(3, 4, GL_FLOAT, FALSE, sizeof(tk3VERTEX),
+                          (VOID *)(sizeof(VEC) * 2 + sizeof(VEC2))); /* color */
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    glBindVertexArray(0);
+  }
+
+  if (I != NULL && NumOfI != 0)
+  {
+    glGenBuffers(1, &Pr->IBuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(INT) * NumOfI, I, GL_STATIC_DRAW);
+    Pr->NumOfElements = NumOfI;
+  }
+  else
+    Pr->NumOfElements = NumOfV;
   Pr->Trans = MatrIdentity();
-  memset(Pr->V, 0, size);
-
-  return TRUE;
-}
+  
+} /* End of 'TK3_RndPrimCreate' function */
 
 /*Destroys a primitive*/
 VOID TK3_RndPrimFree( tk3PRIM *Pr )
 {
-  if (Pr->V != NULL)
-    free(Pr->V);
-  memset(Pr, 0, sizeof(tk3PRIM));
+  glBindVertexArray(Pr->VA);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &Pr->VBuf);
+
+  glBindVertexArray(0);
+  glDeleteVertexArrays(1, &Pr->VA);
 }
 
 /*Draws a primitive on the screen*/
 VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
 {
-  POINT *Proj;
-  INT i;
+  /*POINT *Proj;
+  INT i;    */
   MATR wvp = MatrMulMatr(World, TK3_RndMatrVP);
 
-  if ((Proj = malloc(sizeof(POINT) * Prim->NumOfV)) == NULL)
-    return;
-
-  /* Send matrix to OpenGL /v.1.0 */
+  //if ((Proj = malloc(sizeof(POINT) * Prim->NumOfV)) == NULL)
+    //return;   
   glLoadMatrixf(wvp.M[0]);
+  glBindVertexArray(Prim->VA);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Prim->IBuf);
+
+  glDrawElements(GL_TRIANGLES, Prim->NumOfElements, GL_UNSIGNED_INT, NULL);
+
+  glBindVertexArray(0);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+ /* glBindVertexArray(Prim->VA);
+
+  glDrawArrays(GL_TRIANGLES, 0, Prim->NumOfV);
+
+  glBindVertexArray(0);
+  /* Send matrix to OpenGL /v.1.0 */
+  /*glLoadMatrixf(wvp.M[0]);
   /* Draw triangles */
-  glBegin(GL_TRIANGLES);
+  /*glBegin(GL_TRIANGLES);
   for (i = 0; i < Prim->NumOfI; i++)
   {
     if(i < Prim->NumOfI / 4)
@@ -83,12 +139,29 @@ VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
 }
 
 
+/* Load primitive from '*.OBJ' file function.
+ * ARGUMENTS:
+ *   - pointer to primitive to load:
+ *       tk3PRIM *Pr;
+ *   - '*.OBJ' file name:
+ *       CHAR *FileName;
+ * RETURNS:
+ *   (BOOL) TRUE if success, FALSE otherwise.
+ */
 BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName )
 {
   FILE *F;
-  INT i, nv = 0, nind = 0;
+  INT i, nv = 0, nind = 0, size;
+  tk3VERTEX *V;
+  INT *Ind;
   static CHAR Buf[1000];
+  VEC L;
+  FLT nl;
+  FLT r = 1.0, g = 1.0, b = 1.0;
 
+  L.X = 1.0;
+  L.Y = 1.0;
+  L.Z = 1.0;
   memset(Pr, 0, sizeof(tk3PRIM));
   if ((F = fopen(FileName, "r")) == NULL)
     return FALSE;
@@ -103,17 +176,17 @@ BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName )
       INT n = 0;
 
       for (i = 1; Buf[i] != 0; i++)
-        if (Buf[i - 1] == ' ' && Buf[i] != ' ')
+        if (isspace((UCHAR)Buf[i - 1]) && !isspace((UCHAR)Buf[i]))
           n++;
       nind += (n - 2) * 3;
     }
   }
 
-  if (!TK3_RndPrimCreate(Pr, nv, nind))
-  {
-    fclose(F);
+  size = sizeof(tk3VERTEX) * nv + sizeof(INT) * nind;
+  if ((V = malloc(size)) == NULL)
     return FALSE;
-  }
+  Ind = (INT *)(V + nv);
+  memset(V, 0, size);
 
   /* Load primitive */
   rewind(F);
@@ -126,17 +199,20 @@ BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName )
       DBL x, y, z;
 
       sscanf(Buf + 2, "%lf%lf%lf", &x, &y, &z);
-      Pr->V[nv++].P = VecSet(x, y, z);
+      V[nv++].P = VecSet(x, y, z);
     }
     else if (Buf[0] == 'f' && Buf[1] == ' ')
     {
       INT n = 0, n0, n1, nc;
 
       for (i = 1; Buf[i] != 0; i++)
-        if (Buf[i - 1] == ' ' && Buf[i] != ' ')
+        if (isspace((UCHAR)Buf[i - 1]) && !isspace((UCHAR)Buf[i]))
         {
           sscanf(Buf + i, "%i", &nc);
-          nc--;
+          if (nc < 0)
+            nc = nv + nc;
+          else
+            nc--;
 
           if (n == 0)
             n0 = nc;
@@ -144,23 +220,46 @@ BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName )
             n1 = nc;
           else
           {
-            Pr->I[nind++] = n0;
-            Pr->I[nind++] = n1;
-            Pr->I[nind++] = nc;
+            Ind[nind++] = n0;
+            Ind[nind++] = n1;
+            Ind[nind++] = nc;
             n1 = nc;
           }
           n++;
         }
     }
   }
+  for (i = 0; i < nv; i++)
+      V[i].N = VecSet(0, 0, 0);
+  for (i = 0; i < nind; i += 3)
+    {
+      VEC
+        p0 = V[Ind[i]].P,
+        p1 = V[Ind[i + 1]].P,
+        p2 = V[Ind[i + 2]].P,
+        N = VecNormalize(VecCrossVec(VecSubVec(p1, p0), VecSubVec(p2, p0)));
 
+      V[Ind[i]].N = VecAddVec(V[Ind[i]].N, N); /* VecAddVecEq(&V[Ind[i]].N, N); */
+      V[Ind[i + 1]].N = VecAddVec(V[Ind[i + 1]].N, N);
+      V[Ind[i + 2]].N = VecAddVec(V[Ind[i + 2]].N, N);
+    }
+  for (i = 0; i < nv; i++)
+  {
+    V[i].N = VecNormalize(V[i].N);
+    nl = VecDotVec(V[i].N, L);
+    if (nl < 0.1)
+      nl = 0.1;
+    V[i].C = Vec4Set(r * nl, g * nl, b * nl, 1);
+  }
   fclose(F);
+  TK3_RndPrimCreate(Pr, V, nv, Ind, nind);
+  free(V);
   return TRUE;
-} 
+} /* End of 'TK3_RndPrimLoad' function */
 /* Load primitive from '*.OBJ' file function.
  * ARGUMENTS:
  *   - pointer to primitive to load:
- *       vg4PRIM *Pr;
+ *       tk3PRIM *Pr;
  *   - '*.OBJ' file name:
  *       CHAR *FileName;
  * RETURNS:
