@@ -32,8 +32,7 @@ typedef struct tagtk3PRIMEX
 } tk3PRIMEX;  /*Ptimitive and the amount of vectors and matrixes defining it*/
 typedef struct tagtk3ANIM
 {
-  HWND hWnd;                     
-  HDC hDC;                      
+  HWND hWnd;                                           
   INT W, H;                      
   DBL
     GlobalTime, GlobalDeltaTime, /* Global time and interframe interval */
@@ -57,11 +56,19 @@ struct tagtk3UNIT_COW
   tk3PRIMEX Cow;
   VEC Pos;
 };
+typedef struct tagtk3UNIT_CONTROL tk3UNIT_CONTROL;
+struct tagtk3UNIT_CONTROL
+{
+  UNIT_BASE_FIELDS;
+  DBL AngleSpeed, Speed;
+  VEC Pos, CamLoc, CamDir, CamSet;
+};
 tk3UNIT *Units[TK3_MAX_UNITS];
 INT NumOfUnits; 
 tk3UNIT * TK3_AnimUnitCreate( INT Size );
-
 tk3UNIT * TK3_AnimUnitCowCreate( VOID );
+tk3UNIT * TK3_AnimUnitControlCreate( VOID );
+static VOID TK3_UnitControlInit( tk3UNIT_CONTROL *Uni, tk3ANIM *Ani );
 #endif /*__units_h_*/
 /*End of "units.h" file" */
 

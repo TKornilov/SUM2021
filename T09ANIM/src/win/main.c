@@ -8,6 +8,7 @@
 #include <math.h>
 #include <time.h>
 
+
 #include "../def.h"
 #define WND_CLASS_NAME "Summer practice"
 
@@ -73,8 +74,10 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
       DispatchMessage(&msg);
     }
     else
-      SendMessage(hWnd, WM_TIMER, 30, 0);
-
+    {
+      TK3_AnimRender();
+      TK3_RndCopyFrame();
+    }
   return msg.wParam;
 }
 
@@ -94,13 +97,10 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
 LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam )
 {
-  HDC hDC;
-  PAINTSTRUCT ps;
   INT x = 0, y = 0, i;
-  POINT pt;
   static CHAR Buf[100];
   static INT w, h;
-  static tk3PRIM Pr, Pr1;
+
 
   switch (Msg)
   {
@@ -108,52 +108,36 @@ LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
     TK3_MouseWheel += (SHORT)HIWORD(wParam);
     return 0;
   case WM_CREATE:
-    // SetTimer(hWnd, 30, 1, NULL);
-    //TK3_RndInit(hWnd);
-    TK3_AnimInit(hWnd);
+   
+    TK3_AnimInit(hWnd);                                                  
     TK3_Anim.Units[0] = TK3_AnimUnitCowCreate();
+    TK3_Anim.Units[1] = TK3_AnimUnitControlCreate();
+    for (i = 0; i < TK3_Anim.NumOfUnits; i++)
+      TK3_Anim.Units[i]->Init(TK3_Anim.Units[i], &TK3_Anim);
     TK3_RndCamSet(VecSet(5, 200, 200), VecSet(0, 0, 0), VecSet(0, 1, 0));
-    //TK3_RndPrimLoad(&Pr, "med_house_final.obj");
-    //TK3_RndPrimLoad(&Pr1, "Roman_soldier.obj");
+   
     return 0;
   case WM_KEYDOWN:
     if (wParam == VK_ESCAPE)
       SendMessage(hWnd, WM_CLOSE, 0, 0);
     else if (wParam == VK_SPACE)
       TK3_Anim.IsPause = !TK3_Anim.IsPause;
-    /*GetKeyboardState(TK3_Anim.Keys);
-    for (i = 0; i < 256; i++)
-    {
-      TK3_Anim.Keys[i] >>= 7;
-      TK3_Anim.KeysClick[i] = TK3_Anim.Keys[i] && !TK3_Anim.KeysOld[i];   
-    }
-    memcpy(TK3_Anim.KeysOld, TK3_Anim.Keys, 256);*/   
+    /**/   
     return 0;
   case WM_TIMER:
-    /*
-    /*GLB_TimerResponse(); */
-    //TK3_RndStart();
-    TK3_AnimRender();
-    TextOut(TK3_Anim.hDC, 8, 8, Buf, sprintf(Buf, "FPS: %.3f", TK3_Anim.FPS));
-    //TK3_RndPrimDraw(&Pr, MatrRotateX(270));
-    //TK3_RndPrimDraw(&Pr1, MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrScale(VecSet(10, 10, 10)), MatrRotateX(0)), MatrTranslate(VecSet(50 * sin(clock() / (DBL)CLOCKS_PER_SEC) * cos(clock() / (DBL)CLOCKS_PER_SEC), 50, 70))), MatrRotateZ(0)));
-   // TK3_RndEnd();
-    hDC = GetDC(hWnd);
-    TK3_RndCopyFrame(hDC);
-    ReleaseDC(hWnd, hDC); 
+    TK3_RndCopyFrame();
     return 0;
   case WM_SIZE:
     TK3_RndResize(LOWORD(lParam), HIWORD(lParam));
     SendMessage(hWnd, WM_TIMER, 0, 0);
     return 0;
   case WM_PAINT:
-    hDC = BeginPaint(hWnd, &ps);
-    TK3_RndCopyFrame(hDC);
-    EndPaint(hWnd, &ps);
+    TK3_AnimRender();
+    TK3_RndCopyFrame();
     return 0;
   case WM_DESTROY:
+    //TK3_AnimClose();
     KillTimer(hWnd, 30);
-    TK3_RndPrimFree(&Pr);
     TK3_RndClose();
     PostQuitMessage(0);
     return 0;

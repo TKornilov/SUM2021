@@ -6,8 +6,8 @@
 #include "rnd.h"
 
 HWND TK3_hRndWnd; 
-HDC TK3_hRndDCFrame;
-HBITMAP TK3_hRndBmFrame;
+HDC TK3_hRndDC;
+HGLRC TK3_hRndGLRC;
 INT TK3_RndFrameW, TK3_RndFrameH;
 
 DBL

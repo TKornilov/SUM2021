@@ -57,6 +57,13 @@ struct tagtk3UNIT_COW
   tk3PRIMEX Cow;
   VEC Pos;
 };
+typedef struct tagtk3UNIT_CONTROL tk3UNIT_CONTROL;
+struct tagtk3UNIT_CONTROL
+{
+  UNIT_BASE_FIELDS;
+  DBL AngleSpeed, Speed;
+  VEC Pos, CamLoc, CamDir, CamSet;
+};
 tk3UNIT *Units[TK3_MAX_UNITS];
 INT NumOfUnits; 
 tk3UNIT * TK3_AnimUnitCreate( INT Size );

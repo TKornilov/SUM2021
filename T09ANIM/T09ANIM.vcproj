@@ -217,6 +217,10 @@
 					Name="Rendering system"
 					>
 					<File
+						RelativePath=".\src\anim\rnd\glew.c"
+						>
+					</File>
+					<File
 						RelativePath=".\src\anim\rnd\rnd.h"
 						>
 					</File>
@@ -245,6 +249,10 @@
 			<Filter
 				Name="Units Support"
 				>
+				<File
+					RelativePath=".\src\units\uctrl.c"
+					>
+				</File>
 				<File
 					RelativePath=".\src\units\units.h"
 					>

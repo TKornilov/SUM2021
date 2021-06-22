@@ -10,7 +10,7 @@ VOID TK3_AnimInit( HWND hWnd )
 
   TK3_Anim.hWnd = hWnd;
   TK3_RndInit(hWnd);
-  TK3_Anim.hDC = TK3_hRndDCFrame;
+
   TK3_TimerInit();
   TK3_AnimInputInit();
 }
@@ -32,9 +32,9 @@ VOID TK3_AnimResize( INT W, INT H )
   TK3_Anim.H = H;
   TK3_RndResize(W, H);
 }
-VOID TK3_AnimCopyFrame( HDC hDC )
+VOID TK3_AnimCopyFrame( VOID )
 {
-  TK3_RndCopyFrame(hDC);
+  TK3_RndCopyFrame();
 }
 VOID TK3_AnimRender( VOID )
 {
@@ -42,8 +42,8 @@ VOID TK3_AnimRender( VOID )
 
   TK3_TimerResponse();
   TK3_AnimInputResponse();
-  for (i = 0; i < TK3_Anim.NumOfUnits; i++)
-    TK3_Anim.Units[i]->Init(TK3_Anim.Units[i], &TK3_Anim); 
+  /*for (i = 0; i < TK3_Anim.NumOfUnits; i++)
+    TK3_Anim.Units[i]->Init(TK3_Anim.Units[i], &TK3_Anim);*/ 
   for (i = 0; i < TK3_Anim.NumOfUnits; i++)
     TK3_Anim.Units[i]->Response(TK3_Anim.Units[i], &TK3_Anim);               
 

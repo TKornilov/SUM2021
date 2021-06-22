@@ -44,7 +44,26 @@ VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
   if ((Proj = malloc(sizeof(POINT) * Prim->NumOfV)) == NULL)
     return;
 
-  for (i = 0; i < Prim->NumOfV; i++)
+  /* Send matrix to OpenGL /v.1.0 */
+  glLoadMatrixf(wvp.M[0]);
+  /* Draw triangles */
+  glBegin(GL_TRIANGLES);
+  for (i = 0; i < Prim->NumOfI; i++)
+  {
+    if(i < Prim->NumOfI / 4)
+      glColor3d(1.0, 1.0, 1.0);
+    else if(i < Prim->NumOfI / 2)
+      glColor3d(0.0, 0.0, 1.0);
+    else if(i < Prim->NumOfI / 4 * 3)
+      glColor3d(0.0, 1.0, 0.0);
+    else
+      glColor3d(1.0, 0.0, 0.0); 
+    glVertex3fv(&Prim->V[Prim->I[i]].P.X);
+  }
+  glEnd();
+  
+
+  /*for (i = 0; i < Prim->NumOfV; i++)
   {
     VEC P = MulMatr(Prim->V[i].P, wvp);
 
@@ -59,8 +78,8 @@ VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
     p[0] = Proj[Prim->I[i]];
     p[1] = Proj[Prim->I[i + 1]];
     p[2] = Proj[Prim->I[i + 2]];
-    Polygon(TK3_hRndDCFrame, p, 3);
-  }
+    Polygon(TK3_hRndDC, p, 3);
+  } */
 }
 
 

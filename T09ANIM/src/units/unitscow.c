@@ -23,7 +23,7 @@ static VOID TK3_UnitCowInit( tk3UNIT_COW *Uni, tk3ANIM *Ani )
   for(i = 0; i < COW.NumOfI; i++)
     COW.I[i] = Uni->Cow.I[i];
   COW.Trans = Uni->Cow.Trans;   
-  TK3_RndPrimLoad(&COW, "cow.obj");
+  TK3_RndPrimLoad(&COW, "BIN/MODELS/cow.obj");
 } /* End of 'TK3_UnitInit' function */
 
 /* Unit deinitialization function.
@@ -50,9 +50,13 @@ static VOID TK3_UnitCowResponse( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
   Uni->Pos.X += Ani->W * 2.5;
 
- // Uni->CamLoc =
-  //  VecAddVec(Uni->CamLoc,
-  //    VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
+  /*Uni->CamLoc =
+  VecAddVec(Uni->CamLoc,
+  VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
+  Uni->CamLoc =
+  VecAddVec(Uni->CamLoc,
+  VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
+  TK3_RndCamSet(Uni->CamLoc, Uni->CamDir, Uni->CamSet); */
 } /* End of 'TK3_UnitResponse' function */
 
 /* Unit render function.
@@ -77,7 +81,7 @@ static VOID TK3_UnitCowRender( tk3UNIT_COW *Uni, tk3ANIM *Ani )
     COW.I[i] = Uni->Cow.I[i];
   COW.Trans = Uni->Cow.Trans;
   }
-  TK3_RndPrimDraw(&COW, MatrMulMatr(MatrScale(VecSet(10, 10, 10)), MatrTranslate(VecSet(100 * sin(t), 0, 0))));
+  TK3_RndPrimDraw(&COW,  MatrMulMatr(MatrMulMatr(MatrScale(VecSet(10, 10, 10)), MatrTranslate(VecSet(100 * sin(t), 0, 0))), MatrRotateY(180 * sin(t))));
 } /* End of 'TK3_UnitRender' function */
 
 /* Unit creation function.

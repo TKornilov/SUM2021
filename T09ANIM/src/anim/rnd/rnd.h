@@ -5,6 +5,8 @@
 #ifndef __rnd_h_
 #define __rnd_h_
 
+#define GLEW_STATIC
+#include <glew.h>
 #include "../../def.h"
 
 typedef struct tagtk3VERTEX
@@ -21,8 +23,8 @@ typedef struct tagtk3PRIM
 } tk3PRIM;  /*Ptimitive and the amount of vectors and matrixes defining it*/
 
 extern HWND TK3_hRndWnd;
-extern HDC TK3_hRndDCFrame;
-extern HBITMAP TK3_hRndBmFrame;
+extern HDC TK3_hRndDC;
+extern HGLRC TK3_hRndGLRC;
 extern INT TK3_RndFrameW, TK3_RndFrameH;
 extern DBL
   TK3_RndProjSize,
@@ -39,7 +41,7 @@ VOID TK3_RndStart( VOID );
 VOID TK3_RndEnd( VOID );
 VOID TK3_RndResize( INT W, INT H );
 VOID TK3_RndProjSet( VOID );
-VOID TK3_RndCopyFrame( HDC hDC );
+VOID TK3_RndCopyFrame( VOID );
 VOID TK3_RndCamSet( VEC Loc, VEC At, VEC Up );
 BOOL TK3_RndPrimCreate( tk3PRIM *Pr, INT NoofV, INT NoofI );
 VOID TK3_RndPrimFree( tk3PRIM *Pr );

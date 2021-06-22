@@ -6,7 +6,7 @@
 #ifndef __MTH_h_
 #define  __MTH_h_
 
-#pragma warning(disable: 4244)
+#pragma warning(disable: 4244 4305)
 
 #include <windows.h>
 #include <math.h>
@@ -19,15 +19,16 @@
 
 /* Base double type shortened name */
 typedef double DBL;
+typedef float FLT;
 /* 3d vector definition */
 typedef struct tagVEC
 {
-  DBL X, Y, Z;
+  FLT X, Y, Z;
 } VEC;
 /* 4d matrix definition */
 typedef struct tagMATR
 {
-  DBL M[4][4];
+  FLT M[4][4];
 } MATR;
 
 static MATR UnitMatrix =
@@ -41,7 +42,7 @@ static MATR UnitMatrix =
 };
 
 /*Creates a 3d vector*/
-__inline VEC VecSet( DBL X, DBL Y, DBL Z )
+__inline VEC VecSet( FLT X, FLT Y, FLT Z )
 {
   VEC v = {X, Y, Z};
 
@@ -61,13 +62,13 @@ __inline VEC VecSubVec ( VEC V1, VEC V2 )
 }
 
 /*Multiplies a 3d vector on a number*/
-__inline VEC VecMulNum ( VEC V, DBL N )
+__inline VEC VecMulNum ( VEC V, FLT N )
 {
   return VecSet(V.X * N, V.Y  * N, V.Z * N);
 }
 
 /*Divides a 3d vector by a number*/
-__inline VEC VecDivNum ( VEC V, DBL N )
+__inline VEC VecDivNum ( VEC V, FLT N )
 {
   return VecSet(V.X / N, V.Y  / N, V.Z / N);
 }
@@ -79,7 +80,7 @@ __inline VEC VecNeg ( VEC V )
 }
 
 /*Dot product of two 3d vectors*/
-__inline DBL VecDotVec( VEC V1, VEC V2 )
+__inline FLT VecDotVec( VEC V1, VEC V2 )
 {
   return V1.X * V2.X + V1.Y * V2.Y + V1.Z * V2.Z;
 }
@@ -91,9 +92,9 @@ __inline VEC VecCrossVec( VEC V1, VEC V2 )
 }
 
 /*Length of a 3d vector*/
-__inline DBL VecLen( VEC V )  
+__inline FLT VecLen( VEC V )  
 {
-  DBL len = VecDotVec(V, V);
+  FLT len = VecDotVec(V, V);
 
   if (len == 1 || len == 0)
     return len;
@@ -101,9 +102,9 @@ __inline DBL VecLen( VEC V )
 }
 
 /*Square length of a 3d vector*/
-__inline DBL VecLen2( VEC V )  
+__inline FLT VecLen2( VEC V )  
 {
-  DBL len =  VecDotVec(V, V);
+  FLT len =  VecDotVec(V, V);
 
   return len;
 }
@@ -111,7 +112,7 @@ __inline DBL VecLen2( VEC V )
 /*Creates a 3d vector with the same direction as the initial and a length of one*/
 __inline VEC VecNormalize( VEC V )  
 {
-  DBL len = VecDotVec(V, V);
+  FLT len = VecDotVec(V, V);
 
   if (len == 1 || len == 0)
     return V;
@@ -146,7 +147,7 @@ __inline VEC PointTransform( VEC V, MATR M )
 /*Transforms a 3d vector by a matrix 4x4*/
 __inline VEC MulMatr( VEC V, MATR M )
 { 
-  DBL w = V.X * M.M[0][3] + V.Y * M.M[1][3] + V.Z * M.M[2][3] + M.M[3][3];
+  FLT w = V.X * M.M[0][3] + V.Y * M.M[1][3] + V.Z * M.M[2][3] + M.M[3][3];
   return VecSet((V.X * M.M[0][0] + V.Y * M.M[0][1] + V.Z * M.M[0][2] + M.M[3][0]) / w, 
                 (V.X * M.M[1][0] + V.Y * M.M[1][1] + V.Z * M.M[1][2] + M.M[3][1]) / w, 
                 (V.X * M.M[2][0] + V.Y * M.M[2][1] + V.Z * M.M[2][2] + M.M[3][2]) / w);
@@ -170,10 +171,10 @@ __inline MATR MatrTranslate( VEC T )
 }
 
 /*Defines a matrix*/
-__inline MATR MatrSet( DBL DBL00, DBL DBL01, DBL DBL02, DBL DBL03, 
-                       DBL DBL10, DBL DBL11, DBL DBL12, DBL DBL13, 
-                       DBL DBL20, DBL DBL21, DBL DBL22, DBL DBL23, 
-                       DBL DBL30, DBL DBL31, DBL DBL32, DBL DBL33 )
+__inline MATR MatrSet( FLT DBL00, FLT DBL01, FLT DBL02, FLT DBL03, 
+                       FLT DBL10, FLT DBL11, FLT DBL12, FLT DBL13, 
+                       FLT DBL20, FLT DBL21, FLT DBL22, FLT DBL23, 
+                       FLT DBL30, FLT DBL31, FLT DBL32, FLT DBL33 )
 {
   MATR m =
   {
@@ -202,9 +203,9 @@ __inline MATR MatrScale( VEC S )
 
 
 /*Rotates a vector around x axis*/
-__inline MATR MatrRotateX( DBL AngleInDegree )
+__inline MATR MatrRotateX( FLT AngleInDegree )
 {
-  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  FLT a = D2R(AngleInDegree), s = sin(a), c = cos(a);
   MATR m =
   {
     {
@@ -219,9 +220,9 @@ __inline MATR MatrRotateX( DBL AngleInDegree )
 }
 
 /*Rotates a vector around y axis*/
-__inline MATR MatrRotateY( DBL AngleInDegree )
+__inline MATR MatrRotateY( FLT AngleInDegree )
 {
-  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  FLT a = D2R(AngleInDegree), s = sin(a), c = cos(a);
   MATR m =
   {
     {
@@ -236,9 +237,9 @@ __inline MATR MatrRotateY( DBL AngleInDegree )
 } 
 
 /*Rotates a vector around z axis*/
-__inline MATR MatrRotateZ( DBL AngleInDegree )
+__inline MATR MatrRotateZ( FLT AngleInDegree )
 {
-  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  FLT a = D2R(AngleInDegree), s = sin(a), c = cos(a);
   MATR m =
   {
     {
@@ -253,9 +254,9 @@ __inline MATR MatrRotateZ( DBL AngleInDegree )
 }
 
 /*Rotates a vector without an axis*/
-__inline MATR MatrRotate( DBL AngleInDegree, VEC V )
+__inline MATR MatrRotate( FLT AngleInDegree, VEC V )
 {
-  DBL a = D2R(AngleInDegree), s = sin(a), c = cos(a);
+  FLT a = D2R(AngleInDegree), s = sin(a), c = cos(a);
   VEC A = VecNormalize(V);
   MATR m =
   {
@@ -302,7 +303,7 @@ __inline MATR MatrView( VEC Loc, VEC At, VEC Up1 )
   return m;
 }
 
-__inline MATR MatrOrto( DBL Left, DBL Right, DBL Bottom, DBL Top, DBL Near, DBL Far)
+__inline MATR MatrOrto( FLT Left, FLT Right, FLT Bottom, FLT Top, FLT Near, FLT Far)
 {
   MATR m =
   {
@@ -317,7 +318,7 @@ __inline MATR MatrOrto( DBL Left, DBL Right, DBL Bottom, DBL Top, DBL Near, DBL 
   return m;
 } 
 
-__inline MATR MatrFrustum( DBL Left, DBL Right, DBL Bottom, DBL Top, DBL Near, DBL Far)
+__inline MATR MatrFrustum( FLT Left, FLT Right, FLT Bottom, FLT Top, FLT Near, FLT Far)
 {
   MATR m =
   {
@@ -342,16 +343,16 @@ __inline MATR MatrTranspose( MATR M )
 }
 
 /*Determinant of a 3d matrix*/
-__inline DBL MatrDeterm3x3( DBL A11, DBL A12, DBL A13,
-                   DBL A21, DBL A22, DBL A23,
-                   DBL A31, DBL A32, DBL A33 )
+__inline FLT MatrDeterm3x3( FLT A11, FLT A12, FLT A13,
+                   FLT A21, FLT A22, FLT A23,
+                   FLT A31, FLT A32, FLT A33 )
 {
   return A11 * A22 * A33 + A12 * A23 * A31 + A13 * A21 * A32 -
          A11 * A23 * A32 - A12 * A21 * A33 - A13 * A22 * A31;
 }
 
 /*Determinant of a 4d matrix*/
-__inline DBL MatrDeterm( MATR M )
+__inline FLT MatrDeterm( MATR M )
 {
   return
     M.M[0][0] * MatrDeterm3x3(M.M[1][1], M.M[1][2], M.M[1][3],
@@ -372,7 +373,7 @@ __inline DBL MatrDeterm( MATR M )
 __inline MATR MatrInverse( MATR M )
 {
   MATR r;
-  DBL det = MatrDeterm(M);
+  FLT det = MatrDeterm(M);
   INT s, i, j, P[][3] = {{1, 2, 3}, {0, 2, 3}, {0, 1, 3}, {0, 1, 2}};
 
   if (det == 0)
