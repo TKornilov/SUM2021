@@ -10,11 +10,13 @@
 #include "../../def.h"
 #define TK3_MAX_SHADERS 30
 #define TK3_STR_MAX 300
+#define TK3_MAX_TEXTURES 300
 
 typedef struct tagtk3VERTEX
 {
-  VEC P, N;
+  VEC P;
   VEC2 T;
+  VEC N;
   VEC4 C;
 } tk3VERTEX; /*3d Vector for primitives*/
 typedef enum tagtk3PRIM_TYPE
@@ -43,6 +45,12 @@ typedef struct tagtk3SHADER
   INT ProgId;
   CHAR Name[TK3_MAX_SHADERS];
 } tk3SHADER;
+typedef struct tagtk3TEXTURE
+{
+  CHAR Name[TK3_STR_MAX]; /* Texture name */
+  INT W, H;               /* Texture size in pixels */
+  UINT TexId;             /* OpenGL texture Id */ 
+} tk3TEXTURE;
 
 extern tk3SHADER TK3_RndShaders[TK3_MAX_SHADERS];
 extern HWND TK3_hRndWnd;
@@ -70,9 +78,12 @@ VOID TK3_RndPrimCreate( tk3PRIM *Pr, tk3VERTEX *V, INT NumOfV, INT *I, INT NumOf
 VOID TK3_RndPrimFree( tk3PRIM *Pr );
 VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World );
 BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName );
+VOID TK3_RndTexClose( VOID );
 VOID TK3_RndShadersInit( VOID );
 VOID TK3_RndShadersClose( VOID );
 VOID TK3_RndShdFree( INT ProgId );
+VOID TK3_RndShadersUpdate( VOID );
+INT TK3_RndTexDraw( CHAR *Name );
 
 
 #endif /*__rnd_h*/

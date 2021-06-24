@@ -93,18 +93,15 @@ VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
     glUniformMatrix4fv(loc, 1, FALSE, wvp.M[0]);
   if ((loc = glGetUniformLocation(ProgId, "Time")) != -1)
     glUniform1f(loc, TK3_Anim.Time);
-  glUseProgram(0);
 
   glLoadMatrixf(wvp.M[0]);
   glBindVertexArray(Prim->VA);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Prim->IBuf);
-
   glDrawElements(gl_prim_type, Prim->NumOfElements, GL_UNSIGNED_INT, NULL);
-
   glBindVertexArray(0);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  glUseProgram(0);
 }
 
 

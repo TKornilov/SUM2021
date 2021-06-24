@@ -4,8 +4,6 @@
 */
 
 #include "rnd.h"
-
-#include "rnd.h"
 #include <wglew.h>
 #include <gl/wglext.h>
 
@@ -87,13 +85,14 @@ VOID TK3_RndInit( HWND hWnd )
   /* Set default OpenGL parameters */
   glEnable(GL_DEPTH_TEST);
   glClearColor(0.3, 0.47, 0.81, 1);
-  //TK3_RndShadersInit();
+  TK3_RndShadersInit();
 }
 
 /*Destroys parameters of a frame*/
 VOID TK3_RndClose( VOID )
 {
-  //TK3_RndShadersClose();
+  TK3_RndShadersClose();
+  TK3_RndTexClose();
   wglMakeCurrent(NULL, NULL);
   wglDeleteContext(TK3_hRndGLRC);
   ReleaseDC(TK3_hRndWnd, TK3_hRndDC);
@@ -102,15 +101,15 @@ VOID TK3_RndClose( VOID )
 /*Starts the current frame*/
 VOID TK3_RndStart( VOID )
 {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  /*SelectObject(TK3_hRndDC, GetStockObject(DC_BRUSH));
-  SelectObject(TK3_hRndDC, GetStockObject(NULL_PEN));
-  SetDCBrushColor(TK3_hRndDC, RGB(0, 0, 120));
-  Rectangle(TK3_hRndDC, -1, -1, TK3_RndFrameW + 1, TK3_RndFrameH + 1);
+  static DBL loadtime;
 
-  SelectObject(TK3_hRndDC, GetStockObject(NULL_BRUSH));
-  SelectObject(TK3_hRndDC, GetStockObject(DC_PEN));
-  SetDCPenColor(TK3_hRndDC, RGB(220, 220, 220));*/
+  if ((loadtime += TK3_Anim.GlobalDeltaTime) > 1)
+  {
+    loadtime = 0;
+    TK3_RndShadersUpdate();
+  }
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
 }
 
@@ -124,8 +123,7 @@ VOID TK3_RndEnd( VOID )
 VOID TK3_RndCopyFrame( VOID )
 {
   wglSwapLayerBuffers(TK3_hRndDC, WGL_SWAP_MAIN_PLANE);
-  /*BitBlt(hDC, 0, 0, TK3_RndFrameW, TK3_RndFrameH,
-    TK3_hRndDCFrame, 0, 0, SRCCOPY);   */
+
 }
 
 /*Sets the parameters of a projecting matrix*/

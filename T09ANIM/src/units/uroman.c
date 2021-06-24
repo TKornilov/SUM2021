@@ -4,7 +4,7 @@
 */
 #include <time.h>
 #include "../def.h"
-static tk3PRIM ROMAN;
+static tk3PRIM ROMAN, BRITT;
 /* Unit initialization function.
  * ARGUMENTS:
  *   - self-pointer to unit object:
@@ -15,7 +15,8 @@ static tk3PRIM ROMAN;
  */
 static VOID TK3_UnitRomanInit( tk3UNIT_ROMAN *Uni, tk3ANIM *Ani )
 {
-  TK3_RndPrimLoad(&ROMAN, "BIN/MODELS/Monastery.obj");
+  TK3_RndPrimLoad(&ROMAN, "BIN/MODELS/Soldier_swordsman.obj");
+  TK3_RndPrimLoad(&BRITT, "BIN/MODELS/Exper1.obj");
 } /* End of 'TK3_UnitInit' function */
 
 /* Unit deinitialization function.
@@ -54,7 +55,9 @@ static VOID TK3_UnitRomanResponse( tk3UNIT_ROMAN *Uni, tk3ANIM *Ani )
 static VOID TK3_UnitRomanRender( tk3UNIT_ROMAN *Uni, tk3ANIM *Ani )
 {
   DBL t = TK3_Anim.Time;
-  TK3_RndPrimDraw(&ROMAN,  MatrMulMatr(MatrMulMatr(MatrScale(VecSet(0.003, 0.003, 0.003)), MatrTranslate(VecSet(-10, 0, 0))), MatrRotateY(0)));
+  TK3_RndPrimDraw(&ROMAN, MatrMulMatr(MatrMulMatr(MatrScale(VecSet(3, 3, 3)), MatrTranslate(VecSet(-10, 0, 0))), MatrRotateY(0)));
+  TK3_RndPrimDraw(&BRITT, MatrMulMatr(MatrMulMatr(MatrScale(VecSet(3, 3, 3)), MatrTranslate(VecSet(-10, 0, 0))), MatrRotateY(0)));
+ 
 } /* End of 'TK3_UnitRender' function */
 
 /* Unit creation function.

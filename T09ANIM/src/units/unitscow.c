@@ -20,6 +20,7 @@ static VOID TK3_UnitCowInit( tk3UNIT_COW *Uni, tk3ANIM *Ani )
   COW.VBuf = Uni->Cow.VBuf;
   COW.NumOfElements = Uni->Cow.NumOfElements;
   TK3_RndPrimLoad(&COW, "BIN/MODELS/cow.obj");
+  //TK3_UnitTex(
 } /* End of 'TK3_UnitInit' function */
 
 /* Unit deinitialization function.
