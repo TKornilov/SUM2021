@@ -54,9 +54,19 @@ static VOID TK3_UnitControlResponse( tk3UNIT_CONTROL *Uni, tk3ANIM *Ani )
       MatrRotateY(Ani->Keys[VK_LBUTTON] *
         Ani->GlobalDeltaTime * Uni->AngleSpeed * Ani->Mdx));
   Uni->CamLoc =
-    VecAddVec(Uni->CamLoc,
+    PointTransform(Uni->CamLoc,
+      MatrTranslate(VecSet(Ani->GlobalDeltaTime * Uni->Speed *
+        (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN]), Ani->GlobalDeltaTime * Uni->Speed *
+        (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN]), Ani->GlobalDeltaTime * Uni->Speed *
+        (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN]))));
+  /*Uni->CamDir =
+    VecAddVec(Uni->CamDir,
       VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed *
         (Ani->Keys[VK_UP] - Ani->Keys[VK_DOWN])));
+  /*Uni->CamLoc =
+    VecAddVec(Uni->CamLoc,
+      VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed *
+        (Ani->Keys[VK_RIGHT] - Ani->Keys[VK_LEFT])));
   /*Uni->CamLoc =
   VecAddVec(Uni->CamLoc,
   VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));*/

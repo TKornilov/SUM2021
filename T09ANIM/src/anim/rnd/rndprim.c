@@ -80,62 +80,31 @@ VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
 {
   /*POINT *Proj;
   INT i;    */
-  MATR wvp = MatrMulMatr(World, TK3_RndMatrVP);
+  MATR wvp = MatrMulMatr(World, MatrMulMatr(TK3_RndMatrView, TK3_RndMatrProj));
+  INT ProgId = TK3_RndShaders[0].ProgId;
+  INT loc;
+  INT gl_prim_type = Prim->Type == TK3_RND_PRIM_LINES ? GL_LINES :
+                   Prim->Type == TK3_RND_PRIM_TRIMESH ? GL_TRIANGLES :
+                   Prim->Type == TK3_RND_PRIM_TRISTRIP ? GL_TRIANGLE_STRIP :
+                   GL_POINTS;
+  glUseProgram(ProgId);
 
-  //if ((Proj = malloc(sizeof(POINT) * Prim->NumOfV)) == NULL)
-    //return;   
+  if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, wvp.M[0]);
+  if ((loc = glGetUniformLocation(ProgId, "Time")) != -1)
+    glUniform1f(loc, TK3_Anim.Time);
+  glUseProgram(0);
+
   glLoadMatrixf(wvp.M[0]);
   glBindVertexArray(Prim->VA);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Prim->IBuf);
 
-  glDrawElements(GL_TRIANGLES, Prim->NumOfElements, GL_UNSIGNED_INT, NULL);
+  glDrawElements(gl_prim_type, Prim->NumOfElements, GL_UNSIGNED_INT, NULL);
 
   glBindVertexArray(0);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
- /* glBindVertexArray(Prim->VA);
-
-  glDrawArrays(GL_TRIANGLES, 0, Prim->NumOfV);
-
-  glBindVertexArray(0);
-  /* Send matrix to OpenGL /v.1.0 */
-  /*glLoadMatrixf(wvp.M[0]);
-  /* Draw triangles */
-  /*glBegin(GL_TRIANGLES);
-  for (i = 0; i < Prim->NumOfI; i++)
-  {
-    if(i < Prim->NumOfI / 4)
-      glColor3d(1.0, 1.0, 1.0);
-    else if(i < Prim->NumOfI / 2)
-      glColor3d(0.0, 0.0, 1.0);
-    else if(i < Prim->NumOfI / 4 * 3)
-      glColor3d(0.0, 1.0, 0.0);
-    else
-      glColor3d(1.0, 0.0, 0.0); 
-    glVertex3fv(&Prim->V[Prim->I[i]].P.X);
-  }
-  glEnd();
-  
-
-  /*for (i = 0; i < Prim->NumOfV; i++)
-  {
-    VEC P = MulMatr(Prim->V[i].P, wvp);
-
-    Proj[i].x = (INT)((P.X + 1) * TK3_RndFrameW / 2);
-    Proj[i].y = (INT)((-P.Y + 1) * TK3_RndFrameH / 2);
-  }
-
-  for (i = 0; i < Prim->NumOfI; i += 3)
-  {
-    POINT p[3];
-
-    p[0] = Proj[Prim->I[i]];
-    p[1] = Proj[Prim->I[i + 1]];
-    p[2] = Proj[Prim->I[i + 2]];
-    Polygon(TK3_hRndDC, p, 3);
-  } */
 }
 
 
@@ -157,7 +126,7 @@ BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName )
   static CHAR Buf[1000];
   VEC L;
   FLT nl;
-  FLT r = 1.0, g = 1.0, b = 1.0;
+  FLT r = 0, g = 1.0, b = 1.0;
 
   L.X = 1.0;
   L.Y = 1.0;

@@ -15,18 +15,6 @@ static tk3PRIM COW;
  */
 static VOID TK3_UnitCowInit( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
-  INT i;
-  COW.NumOfV = Uni->Cow.NumOfV;
-  for(i = 0; i < COW.NumOfV; i++)
-  {
-    COW.V[i].P = Uni->Cow.V[i].P;
-    COW.V[i].T = Uni->Cow.V[i].T;
-    COW.V[i].N = Uni->Cow.V[i].N;
-    COW.V[i].C = Uni->Cow.V[i].C;
-  }
-  COW.NumOfI = Uni->Cow.NumOfI;
-  for(i = 0; i < COW.NumOfI; i++)
-    COW.I[i] = Uni->Cow.I[i];
   COW.Trans = Uni->Cow.Trans;
   COW.VA = Uni->Cow.VA;
   COW.VBuf = Uni->Cow.VBuf;
@@ -78,24 +66,6 @@ static VOID TK3_UnitCowResponse( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 static VOID TK3_UnitCowRender( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
   DBL t = TK3_Anim.Time;
-  /*if(COW.V == NULL)
-  {
-    COW.NumOfV = Uni->Cow.NumOfV;
-    for(i = 0; i < COW.NumOfV; i++)
-    {
-      COW.V[i].P = Uni->Cow.V[i].P;
-      COW.V[i].T = Uni->Cow.V[i].T;
-      COW.V[i].N = Uni->Cow.V[i].N;
-      COW.V[i].C = Uni->Cow.V[i].C;
-    }
-    COW.NumOfI = Uni->Cow.NumOfI;
-    for(i = 0; i < COW.NumOfI; i++)
-      COW.I[i] = Uni->Cow.I[i];
-    COW.Trans = Uni->Cow.Trans;
-    COW.VA = Uni->Cow.VA;
-    COW.VBuf = Uni->Cow.VBuf;
-    COW.NumOfElements = Uni->Cow.NumOfElements;
-  } */
   TK3_RndPrimDraw(&COW,  MatrMulMatr(MatrMulMatr(MatrScale(VecSet(1, 1, 1)), MatrTranslate(VecSet(30 * sin(t), 0, 0))), MatrRotateY(180 * sin(t))));
 } /* End of 'TK3_UnitRender' function */
 

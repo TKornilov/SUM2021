@@ -236,6 +236,14 @@
 						RelativePath=".\src\anim\rnd\rndprim.c"
 						>
 					</File>
+					<Filter
+						Name="Resources"
+						>
+						<File
+							RelativePath=".\src\anim\rnd\shaders\rndshaders.c"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

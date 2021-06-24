@@ -87,11 +87,13 @@ VOID TK3_RndInit( HWND hWnd )
   /* Set default OpenGL parameters */
   glEnable(GL_DEPTH_TEST);
   glClearColor(0.3, 0.47, 0.81, 1);
+  //TK3_RndShadersInit();
 }
 
 /*Destroys parameters of a frame*/
 VOID TK3_RndClose( VOID )
 {
+  //TK3_RndShadersClose();
   wglMakeCurrent(NULL, NULL);
   wglDeleteContext(TK3_hRndGLRC);
   ReleaseDC(TK3_hRndWnd, TK3_hRndDC);
