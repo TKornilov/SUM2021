@@ -9,10 +9,9 @@
 #include <time.h>
 
 
-#include "../def.h"
-#define WND_CLASS_NAME "Summer practice"
+#include "../units/units.h"
 
-tk3ANIM TK3_Anim;
+#define WND_CLASS_NAME "Summer practice"
 
 LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
@@ -63,6 +62,15 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
       NULL, NULL,
       hInstance, NULL);
 
+  /**********************/
+  // TK3_AnimAddUnit(TK3_AnimUnitCowCreate());
+  TK3_AnimAddUnit(TK3_AnimUnitControlCreate());
+  TK3_AnimAddUnit(TK3_AnimUnitMapCreate());
+  TK3_AnimAddUnit(TK3_AnimUnitBuildingsCreate());
+  TK3_AnimAddUnit(TK3_AnimUnitInterfaceCreate());
+  TK3_GenerateProvinceList();
+
+
   ShowWindow(hWnd, SW_SHOWNORMAL);
   UpdateWindow(hWnd);
 
@@ -97,7 +105,7 @@ INT WINAPI WinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstansce,
 LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam )
 {
-  INT x = 0, y = 0, i;
+  INT x = 0, y = 0;
   static CHAR Buf[100];
   static INT w, h;
 
@@ -108,15 +116,7 @@ LRESULT CALLBACK TK3_WindowFunc( HWND hWnd, UINT Msg,
     TK3_MouseWheel += (SHORT)HIWORD(wParam);
     return 0;
   case WM_CREATE:
-   
-    TK3_AnimInit(hWnd);                                                  
-    TK3_Anim.Units[0] = TK3_AnimUnitCowCreate();
-    TK3_Anim.Units[1] = TK3_AnimUnitControlCreate();
-    TK3_Anim.Units[2] = TK3_AnimUnitRomanCreate();
-    for (i = 0; i < TK3_Anim.NumOfUnits; i++)
-      TK3_Anim.Units[i]->Init(TK3_Anim.Units[i], &TK3_Anim);
-    TK3_RndCamSet(VecSet(5, 200, 200), VecSet(0, 0, 0), VecSet(0, 1, 0));
-   
+    TK3_AnimInit(hWnd);
     return 0;
   case WM_KEYDOWN:
     if (wParam == VK_ESCAPE)

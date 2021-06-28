@@ -2,28 +2,18 @@
   PROGRAMMER: TK3
   DATE:21.06.2021
 */
-#include <time.h>
+
 #include <string.h>
+
 #include "anim.h"
-#include "../def.h"
+#include <mmsystem.h>
+
 INT TK3_MouseWheel = 0;
-
-static VOID TK3_UnitControlResponse( tk3UNIT_CONTROL *Uni, tk3ANIM *Ani )
-{
-  Uni->Pos.X += Ani->W * 2.5;
-
-  Uni->CamLoc =
-  VecAddVec(Uni->CamLoc,
-  VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
-  Uni->CamLoc =
-  VecAddVec(Uni->CamLoc,
-  VecMulNum(Uni->CamDir, Ani->GlobalDeltaTime * Uni->Speed * Ani->Mdz));
-  TK3_RndCamSet(Uni->CamLoc, Uni->CamDir, Uni->CamSet); 
-} /* End of 'TK3_UnitResponse' function */
 
 VOID TK3_AnimMouseInit( VOID )
 {
   POINT pt;
+
   GetCursorPos(&pt);
   ScreenToClient(TK3_Anim.hWnd, &pt);
 }
@@ -31,6 +21,7 @@ VOID TK3_AnimMouseInit( VOID )
 VOID TK3_AnimMouseResponse( VOID )
 {
   POINT pt;
+
   GetCursorPos(&pt);
   ScreenToClient(TK3_Anim.hWnd, &pt);
   TK3_Anim.Mdx = pt.x - TK3_Anim.Mx;
@@ -45,6 +36,7 @@ VOID TK3_AnimMouseResponse( VOID )
 VOID TK3_AnimKeyboardInit( VOID )
 {
   INT i;
+
   GetKeyboardState(TK3_Anim.Keys);
   for (i = 0; i < 256; i++)
   {

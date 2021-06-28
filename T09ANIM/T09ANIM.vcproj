@@ -236,9 +236,21 @@
 						RelativePath=".\src\anim\rnd\rndprim.c"
 						>
 					</File>
+					<File
+						RelativePath=".\src\anim\rnd\rndprims.c"
+						>
+					</File>
+					<File
+						RelativePath=".\src\anim\rnd\rndprims.h"
+						>
+					</File>
 					<Filter
 						Name="Resources"
 						>
+						<File
+							RelativePath=".\src\anim\rnd\res\rndmtl.c"
+							>
+						</File>
 						<File
 							RelativePath=".\src\anim\rnd\res\rndshaders.c"
 							>
@@ -262,7 +274,19 @@
 				Name="Units Support"
 				>
 				<File
+					RelativePath=".\src\units\provinces.c"
+					>
+				</File>
+				<File
 					RelativePath=".\src\units\uctrl.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\units\uinterf.c"
+					>
+				</File>
+				<File
+					RelativePath=".\src\units\umap.c"
 					>
 				</File>
 				<File
@@ -270,11 +294,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\units\unitsbuildings.c"
+					>
+				</File>
+				<File
 					RelativePath=".\src\units\unitscow.c"
 					>
 				</File>
 				<File
-					RelativePath=".\src\units\uroman.c"
+					RelativePath=".\src\units\unitstexture.c"
 					>
 				</File>
 			</Filter>

@@ -12,6 +12,7 @@
 
 tk3SHADER TK3_RndShaders[TK3_MAX_SHADERS];
 INT TK3_RndShadersSize;
+
 /***
  * Base shaders functions
  ***/

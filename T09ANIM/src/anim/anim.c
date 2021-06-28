@@ -2,8 +2,11 @@
   PROGRAMMER: TK3
   DATE:21.06.2021
 */
+
 #include "anim.h"
-#include "../def.h"
+
+tk3ANIM TK3_Anim;
+
 VOID TK3_AnimInit( HWND hWnd )
 {
   memset(&TK3_Anim, 0, sizeof(&TK3_Anim));
@@ -42,6 +45,7 @@ VOID TK3_AnimRender( VOID )
 
   TK3_TimerResponse();
   TK3_AnimInputResponse();
+  
   /*for (i = 0; i < TK3_Anim.NumOfUnits; i++)
     TK3_Anim.Units[i]->Init(TK3_Anim.Units[i], &TK3_Anim);*/ 
   for (i = 0; i < TK3_Anim.NumOfUnits; i++)

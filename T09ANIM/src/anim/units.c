@@ -3,8 +3,9 @@
   DATE:21.06.2021
 */
 //#include ""
-#include "../def.h"
-#include "../units/units.h"
+
+#include "anim.h"
+
 /* Unit initialization function.
  * ARGUMENTS:
  *   - self-pointer to unit object:

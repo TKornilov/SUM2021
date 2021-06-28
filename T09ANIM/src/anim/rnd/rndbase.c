@@ -3,7 +3,7 @@
   DATE:21.06.2021
 */
 
-#include "rnd.h"
+#include "../anim.h"
 #include <wglew.h>
 #include <gl/wglext.h>
 
@@ -54,11 +54,10 @@ VOID TK3_RndInit( HWND hWnd )
   i = ChoosePixelFormat(TK3_hRndDC, &pfd);
   DescribePixelFormat(TK3_hRndDC, i, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
   SetPixelFormat(TK3_hRndDC, i, &pfd);
-
   /* OpenGL init: setup rendering context */
   TK3_hRndGLRC = wglCreateContext(TK3_hRndDC);
   wglMakeCurrent(TK3_hRndDC, TK3_hRndGLRC);
-
+    
   /* Initializing GLEW library */
   if (glewInit() != GLEW_OK)
   {
@@ -72,7 +71,7 @@ VOID TK3_RndInit( HWND hWnd )
     MessageBox(TK3_hRndWnd, "Error: no shaders support", "Error", MB_ICONERROR | MB_OK);
     exit(0);
   }
-
+  
   /* Enable a new OpenGL profile support */
   wglChoosePixelFormatARB(TK3_hRndDC, PixelAttribs, NULL, 1, &i, &nums);
   hRC = wglCreateContextAttribsARB(TK3_hRndDC, NULL, ContextAttribs);
@@ -82,17 +81,22 @@ VOID TK3_RndInit( HWND hWnd )
 
   TK3_hRndGLRC = hRC;
   wglMakeCurrent(TK3_hRndDC, TK3_hRndGLRC);
+
   /* Set default OpenGL parameters */
   glEnable(GL_DEPTH_TEST);
   glClearColor(0.3, 0.47, 0.81, 1);
+
+  TK3_RndCamSet(VecSet(5, 200, 200), VecSet(0, 0, 0), VecSet(0, 1, 0));
+
   TK3_RndShadersInit();
+  TK3_RndTexAdd("X:\\PICS\\BRICK.G24");
 }
 
 /*Destroys parameters of a frame*/
 VOID TK3_RndClose( VOID )
 {
-  TK3_RndShadersClose();
-  TK3_RndTexClose();
+  //TK3_RndShadersClose();
+  //TK3_RndTexClose();
   wglMakeCurrent(NULL, NULL);
   wglDeleteContext(TK3_hRndGLRC);
   ReleaseDC(TK3_hRndWnd, TK3_hRndDC);

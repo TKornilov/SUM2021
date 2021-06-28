@@ -2,15 +2,22 @@
   PROGRAMMER: TK3
   DATE:21.06.2021
 */
+
 #ifndef __rnd_h_
 #define __rnd_h_
 
 #define GLEW_STATIC
 #include <glew.h>
+
 #include "../../def.h"
+
 #define TK3_MAX_SHADERS 30
 #define TK3_STR_MAX 300
 #define TK3_MAX_TEXTURES 300
+#define TK3_MAX_MATERIALS 300
+extern INT TK3_RndMaterialsSize;
+extern INT TK3_RndTexturesSize;
+extern INT TK3_RndShadersSize;
 
 typedef struct tagtk3VERTEX
 {
@@ -27,6 +34,20 @@ typedef enum tagtk3PRIM_TYPE
   TK3_RND_PRIM_POINTS,   /* Arrauy of points */
 } tk3PRIM_TYPE;
 
+typedef struct tagtk3MATERIAL
+{
+  CHAR Name[TK3_STR_MAX]; /* Material name */
+
+
+  /* Illumination coefficients */    
+  VEC Ka, Kd, Ks;           /* Ambient, diffuse, specular coefficients */
+  FLT Ph;                   /* Phong power coefficient */
+
+  FLT Trans;                /* Transparency factor */
+  INT Tex[8];               /* Texture references from texture table (or -1) */
+
+  INT ShdNo;                /* Shader number in shader table */
+}tk3MATERIAL;
 
 /* Primitive representation type */
 typedef struct tagtk3PRIM
@@ -37,6 +58,7 @@ typedef struct tagtk3PRIM
     VBuf,            /* Vertex buffer Id */
     IBuf;            /* Index buffer Id (if 0 - use only vertex buffer) */
   INT NumOfElements; /* Number of indices/vecrtices */
+  INT MtlNo;
 
   MATR Trans;   /* Additional transformation matrix */
 } tk3PRIM;
@@ -83,7 +105,7 @@ VOID TK3_RndShadersInit( VOID );
 VOID TK3_RndShadersClose( VOID );
 VOID TK3_RndShdFree( INT ProgId );
 VOID TK3_RndShadersUpdate( VOID );
-INT TK3_RndTexDraw( CHAR *Name );
+INT TK3_RndTexAdd( CHAR *Name );
 
 
 #endif /*__rnd_h*/

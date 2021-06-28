@@ -3,10 +3,12 @@
   DATE:21.06.2021
 */
 
+#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "rnd.h"
-#include "../../mth/mth.h"
+
+#include "../anim.h"
+
 /* Primitive creation function.
  * ARGUMENTS:
  *   - primitive pointer:
@@ -87,7 +89,7 @@ VOID TK3_RndPrimDraw( tk3PRIM *Prim, MATR World )
                    Prim->Type == TK3_RND_PRIM_TRIMESH ? GL_TRIANGLES :
                    Prim->Type == TK3_RND_PRIM_TRISTRIP ? GL_TRIANGLE_STRIP :
                    GL_POINTS;
-  glUseProgram(ProgId);
+  glUseProgram(ProgId = 0);
 
   if ((loc = glGetUniformLocation(ProgId, "MatrWVP")) != -1)
     glUniformMatrix4fv(loc, 1, FALSE, wvp.M[0]);
@@ -120,7 +122,7 @@ BOOL TK3_RndPrimLoad( tk3PRIM *Pr, CHAR *FileName )
   INT i, nv = 0, nind = 0, size;
   tk3VERTEX *V;
   INT *Ind;
-  static CHAR Buf[1000];
+  static CHAR Buf[10000];
   VEC L;
   FLT nl;
   FLT r = 0, g = 1.0, b = 1.0;

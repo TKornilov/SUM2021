@@ -2,9 +2,18 @@
   PROGRAMMER: TK3
   DATE:21.06.2021
 */
-#include <time.h>
-#include "../def.h"
-static tk3PRIM COW;
+
+#include "units.h"
+
+typedef struct tagtk3UNIT_COW tk3UNIT_COW;
+struct tagtk3UNIT_COW
+{
+  UNIT_BASE_FIELDS;
+  tk3PRIM Cow;
+  VEC Pos;
+};
+
+
 /* Unit initialization function.
  * ARGUMENTS:
  *   - self-pointer to unit object:
@@ -15,12 +24,7 @@ static tk3PRIM COW;
  */
 static VOID TK3_UnitCowInit( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
-  COW.Trans = Uni->Cow.Trans;
-  COW.VA = Uni->Cow.VA;
-  COW.VBuf = Uni->Cow.VBuf;
-  COW.NumOfElements = Uni->Cow.NumOfElements;
-  TK3_RndPrimLoad(&COW, "BIN/MODELS/cow.obj");
-  //TK3_UnitTex(
+  TK3_RndPrimLoad(&Uni->Cow, "BIN/MODELS/cow.obj");
 } /* End of 'TK3_UnitInit' function */
 
 /* Unit deinitialization function.
@@ -33,6 +37,7 @@ static VOID TK3_UnitCowInit( tk3UNIT_COW *Uni, tk3ANIM *Ani )
  */
 static VOID TK3_UnitCowClose( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
+  TK3_RndPrimFree(&Uni->Cow);
 } /* End of 'TK3_UnitClose' function */
 
 /* Unit inter frame events handle function.
@@ -67,7 +72,8 @@ static VOID TK3_UnitCowResponse( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 static VOID TK3_UnitCowRender( tk3UNIT_COW *Uni, tk3ANIM *Ani )
 {
   DBL t = TK3_Anim.Time;
-  TK3_RndPrimDraw(&COW,  MatrMulMatr(MatrMulMatr(MatrScale(VecSet(1, 1, 1)), MatrTranslate(VecSet(30 * sin(t), 0, 0))), MatrRotateY(180 * sin(t))));
+
+  TK3_RndPrimDraw(&Uni->Cow, MatrMulMatr(MatrMulMatr(MatrScale(VecSet(1, 1, 1)), MatrTranslate(VecSet(30 * sin(t), 0, 0))), MatrRotateY(180 * sin(t))));
 } /* End of 'TK3_UnitRender' function */
 
 /* Unit creation function.
@@ -81,7 +87,7 @@ tk3UNIT * TK3_AnimUnitCowCreate( VOID )
   tk3UNIT *Uni;
 
   /* Memory allocation */
-  if ((Uni = (tk3UNIT *)TK3_AnimUnitCreate(sizeof(tk3UNIT))) == NULL)
+  if ((Uni = (tk3UNIT *)TK3_AnimUnitCreate(sizeof(tk3UNIT_COW))) == NULL)
     return NULL;
   memset(Uni, 0, 1);
 
@@ -90,10 +96,6 @@ tk3UNIT * TK3_AnimUnitCowCreate( VOID )
   Uni->Close = (VOID *)TK3_UnitCowClose;
   Uni->Response = (VOID *)TK3_UnitCowResponse;
   Uni->Render = (VOID *)TK3_UnitCowRender;
-  TK3_Anim.NumOfUnits++;
-
-  COW = COW;
-
   return Uni;
 } /* End of 'VG4_AnimUnitCreate' function */
 /*End of "unitscow.c" file" */
